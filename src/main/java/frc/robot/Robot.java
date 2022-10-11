@@ -10,13 +10,20 @@ import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.valuetuner.NetworkTableConstant;
+import org.littletonrobotics.junction.LoggedRobot;
+import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.inputs.LoggedNetworkTables;
+import org.littletonrobotics.junction.io.ByteLogReceiver;
+import org.littletonrobotics.junction.io.LogSocketServer;
+
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
  * each mode, as described in the TimedRobot documentation. If you change the name of this class or
  * the package after creating this project, you must also update the build.gradle file in the
  * project.
  */
-public class Robot extends TimedRobot {
+public class Robot extends LoggedRobot {
     public static boolean debug = false;
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     public PowerDistribution pdp = new PowerDistribution();
@@ -29,7 +36,19 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
+        if (debug) {
+            NetworkTableConstant.initializeAllConstants();
+        }
+
         robotContainer = RobotContainer.getInstance();
+        autonomousCommand = robotContainer.getAutonomousCommand();
+
+        setUseTiming(isReal()); // Run as fast as possible during replay
+        LoggedNetworkTables.getInstance().addTable("/SmartDashboard"); // Log & replay "SmartDashboard" values (no tables are logged by default).
+        Logger.getInstance().recordMetadata("ProjectName", "Recode2022"); // Set a metadata value
+
+        Logger.getInstance().addDataReceiver(new ByteLogReceiver("/media/sda1/")); // Log to USB stick (name will be selected automatically)
+        Logger.getInstance().addDataReceiver(new LogSocketServer(5804)); // Provide log data over the network, viewable in Advantage Scope.
     }
 
     /**
