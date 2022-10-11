@@ -1,4 +1,4 @@
-package frc.robot.valuetuner;
+package frc.robot.utils.valuetuner;
 
 /**
  * A wrapper class to the constant, that is being used to return the value in the competition.

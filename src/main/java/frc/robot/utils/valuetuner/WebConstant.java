@@ -1,4 +1,4 @@
-package frc.robot.valuetuner;
+package frc.robot.utils.valuetuner;
 
 import frc.robot.Robot;
 
