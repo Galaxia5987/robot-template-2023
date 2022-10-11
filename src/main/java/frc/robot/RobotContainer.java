@@ -5,13 +5,19 @@ import frc.robot.valuetuner.ValueTuner;
 import webapp.Webserver;
 
 public class RobotContainer {
-    // The robot's subsystems and commands are defined here...
+    private static RobotContainer INSTANCE = null;
 
+    public static RobotContainer getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new RobotContainer();
+        }
+        return INSTANCE;
+    }
 
     /**
      * The container for the robot.  Contains subsystems, OI devices, and commands.
      */
-    public RobotContainer() {
+    private RobotContainer() {
         // Configure the button bindings and default commands
         configureDefaultCommands();
 

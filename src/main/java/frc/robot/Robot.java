@@ -20,8 +20,8 @@ public class Robot extends TimedRobot {
     public static boolean debug = false;
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     public PowerDistribution pdp = new PowerDistribution();
-    private RobotContainer m_robotContainer;
-    private Command m_autonomousCommand;
+    private RobotContainer robotContainer;
+    private Command autonomousCommand;
 
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -29,7 +29,7 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void robotInit() {
-        m_robotContainer = new RobotContainer();
+        robotContainer = RobotContainer.getInstance();
     }
 
     /**
@@ -56,11 +56,11 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void autonomousInit() {
-        m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+        autonomousCommand = robotContainer.getAutonomousCommand();
 
         // schedule the autonomous command (example)
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.schedule();
+        if (autonomousCommand != null) {
+            autonomousCommand.schedule();
         }
     }
 
@@ -77,8 +77,8 @@ public class Robot extends TimedRobot {
      */
     @Override
     public void teleopInit() {
-        if (m_autonomousCommand != null) {
-            m_autonomousCommand.cancel();
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
         }
     }
 
