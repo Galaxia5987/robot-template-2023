@@ -38,23 +38,38 @@ public class PIDTalon extends WPI_TalonFX {
         lastMotionMaxAcceleration = 0;
     }
 
-    public void updatePID(int slot, double kP, double kI, double kD, double kF) {
+    public ErrorCode updatePID(int slot, double kP, double kI, double kD, double kF) {
+        ErrorCode[] errorCodes = new ErrorCode[] {
+                ErrorCode.OK,
+                ErrorCode.OK,
+                ErrorCode.OK,
+                ErrorCode.OK
+        };
+
         if (updateConstant(kP, lastKp)) {
-            super.config_kP(slot, kP);
+            errorCodes[0] = super.config_kP(slot, kP);
         }
         if (updateConstant(kI, lastKi)) {
-            super.config_kI(slot, kI);
+            errorCodes[1] = super.config_kI(slot, kI);
         }
         if (updateConstant(kD, lastKd)) {
-            super.config_kD(slot, kD);
+            errorCodes[2] = super.config_kD(slot, kD);
         }
         if (updateConstant(kF, lastKf)) {
-            super.config_kF(slot, kF);
+            errorCodes[3] = super.config_kF(slot, kF);
         }
         lastKp = kP;
         lastKi = kI;
         lastKd = kD;
         lastKf = kF;
+
+        for (ErrorCode errorCode : errorCodes) {
+            if (errorCode != ErrorCode.OK) {
+                return errorCode;
+            }
+        }
+
+        return ErrorCode.OK;
     }
 
     @Override
