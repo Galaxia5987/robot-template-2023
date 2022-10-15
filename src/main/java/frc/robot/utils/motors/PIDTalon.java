@@ -11,7 +11,7 @@ public class PIDTalon extends WPI_TalonFX {
     private double lastKi;
     private double lastKd;
     private double lastKf;
-    private double lastIZone;
+    private double lastMaxIntegralAccumulator;
 
     private double lastMotionCruiseVelocity;
     private double lastMotionMaxAcceleration;
@@ -22,7 +22,7 @@ public class PIDTalon extends WPI_TalonFX {
         lastKi = 0;
         lastKd = 0;
         lastKf = 0;
-        lastIZone = 0;
+        lastMaxIntegralAccumulator = 0;
         lastMotionCruiseVelocity = 0;
         lastMotionMaxAcceleration = 0;
     }
@@ -33,7 +33,7 @@ public class PIDTalon extends WPI_TalonFX {
         lastKi = 0;
         lastKd = 0;
         lastKf = 0;
-        lastIZone = 0;
+        lastMaxIntegralAccumulator = 0;
         lastMotionCruiseVelocity = 0;
         lastMotionMaxAcceleration = 0;
     }
@@ -73,10 +73,10 @@ public class PIDTalon extends WPI_TalonFX {
     }
 
     @Override
-    public ErrorCode config_IntegralZone(int slot, double iZone) {
-        if (updateConstant(iZone, lastIZone)) {
-            lastIZone = iZone;
-            return super.config_IntegralZone(slot, iZone);
+    public ErrorCode configMaxIntegralAccumulator(int slotIdx, double maxIntegralAccumulator) {
+        if (updateConstant(maxIntegralAccumulator, lastMaxIntegralAccumulator)) {
+            lastMaxIntegralAccumulator = maxIntegralAccumulator;
+            return super.configMaxIntegralAccumulator(slotIdx, maxIntegralAccumulator);
         }
         return ErrorCode.OK;
     }
