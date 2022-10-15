@@ -7,16 +7,16 @@ package frc.robot.utils.math;
  */
 public class InterpolatingDouble implements Interpolable<InterpolatingDouble>, InverseInterpolable<InterpolatingDouble>,
         Comparable<InterpolatingDouble> {
-    public Double value;
+    public double value;
 
-    public InterpolatingDouble(Double val) {
+    public InterpolatingDouble(double val) {
         value = val;
     }
 
     @Override
     public InterpolatingDouble interpolate(InterpolatingDouble other, double x) {
         double dydx = other.value - this.value;
-        Double searchY = dydx * x + value;
+        double searchY = dydx * x + value;
         return new InterpolatingDouble(searchY);
     }
 
@@ -35,6 +35,6 @@ public class InterpolatingDouble implements Interpolable<InterpolatingDouble>, I
 
     @Override
     public int compareTo(InterpolatingDouble other) {
-        return value.compareTo(other.value);
+        return Double.compare(value, other.value);
     }
 }
