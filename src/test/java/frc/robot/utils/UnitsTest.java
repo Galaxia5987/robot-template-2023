@@ -1,8 +1,8 @@
 package frc.robot.utils;
 
 import frc.robot.utils.units.Units;
-import org.junit.*;
 import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -21,7 +21,7 @@ Format for input is as such:
 public class UnitsTest {
     public static final double EPSILON = 1e-4;
 
-    UnitFunction[] unitFunctions = new UnitFunction[] {
+    UnitFunction[] unitFunctions = new UnitFunction[]{
             Units::rpmToRadsPerSec,
             Units::radsPerSecToRpm,
             Units::rpsToRpm,

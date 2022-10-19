@@ -1,7 +1,8 @@
 package frc.robot.utils;
 
 import frc.robot.utils.units.UnitModel;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -24,7 +25,7 @@ public class UnitModelTest {
     public static final double TICKS_PER_DEGREE = TICKS_PER_ROTATION / 360.0;
     public static final double EPSILON = 1e-4;
 
-    UnitModel[] unitModels = new UnitModel[] {
+    UnitModel[] unitModels = new UnitModel[]{
             new UnitModel(TICKS_PER_ROTATION),
             new UnitModel(TICKS_PER_RAD),
             new UnitModel(TICKS_PER_DEGREE)

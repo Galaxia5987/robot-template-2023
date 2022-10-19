@@ -2,16 +2,15 @@ package frc.robot.utils;
 
 import frc.robot.utils.math.InterpolatingDouble;
 import frc.robot.utils.math.InterpolatingDoubleMap;
-
-import java.io.File;
-import java.util.Arrays;
-import java.util.Scanner;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.Scanner;
 
 /*
 Unit test class for the InterpolatingDoubleMap class.

@@ -1,44 +1,46 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<title>TechFire</title>
-		<script src="jquery.min.js"></script>
-		<script src="vue.js"></script>
-		<link rel="stylesheet" href="bootstrap.min.css" />
-	</head>
-	<body>
-		<nav class="navbar navbar-inverse navbar-static-top">
-	        <div class="container">
-	            <div class="navbar-header">
-	                <a class="navbar-brand" href="/index.html">TechFire</a>
-	            </div>
-	            <ul class="nav navbar-nav">
-	                <li><a href="constants.html">Constants</a></li>
-			<li><a href="firescope.html">FireScope</a></li>
-			<li><a href="values.html">Values</a></li>
-	            </ul>
-	        </div>
-	    </nav>
+<head>
+    <title>TechFire</title>
+    <script src="jquery.min.js"></script>
+    <script src="vue.js"></script>
+    <link href="bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/index.html">TechFire</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="constants.html">Constants</a></li>
+            <li><a href="firescope.html">FireScope</a></li>
+            <li><a href="values.html">Values</a></li>
+        </ul>
+    </div>
+</nav>
 
-		<div id="main" class="container">
-			<div class="jumbotron">
-			  <h1>{{status}}</h1>
-				<p v-if="errors.length==0">No errors reported</p>
-				<p v-if="errors.length>0">
-					Errors
-					<ul>
-						<li v-for="e in errors">{{e}}</li>
-					</ul>
-				</p>
-			</div>
+<div class="container" id="main">
+    <div class="jumbotron">
+        <h1>{{status}}</h1>
+        <p v-if="errors.length==0">No errors reported</p>
+        <p v-if="errors.length>0">
+            Errors
+        <ul>
+            <li v-for="e in errors">{{e}}</li>
+        </ul>
+        </p>
+    </div>
 
-			<ul class="list-group">
-				<li class="list-group-item" v-for="(a, idx) in auto.autonomi" v-on:click="setAuto(idx)" v-bind:class="{ active: auto.selected == idx }">{{a}}</li>
-			</ul>
-		</div>
-	</body>
+    <ul class="list-group">
+        <li class="list-group-item" v-bind:class="{ active: auto.selected == idx }" v-for="(a, idx) in auto.autonomi"
+            v-on:click="setAuto(idx)">{{a}}
+        </li>
+    </ul>
+</div>
+</body>
 
-	<script type="text/javascript">
+<script type="text/javascript">
 	var app = new Vue({
 		el: '#main',
 		data: {
@@ -77,5 +79,6 @@
 	$.getJSON("/auto/list", function(auto) {
         Vue.set(app, 'auto', auto);
 	});
-	</script>
+
+</script>
 </html>
