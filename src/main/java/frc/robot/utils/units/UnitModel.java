@@ -43,4 +43,8 @@ public class UnitModel {
         return (int) (velocity * ticksPerUnit / 10);
     }
 
+    @Override
+    public String toString() {
+        return "TicksPerUnit:" + ticksPerUnit;
+    }
 }
