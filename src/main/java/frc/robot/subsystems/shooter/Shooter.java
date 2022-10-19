@@ -1,7 +1,6 @@
 package frc.robot.subsystems.shooter;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import frc.robot.Constants;
 import frc.robot.Ports;
 import frc.robot.subsystems.LoggedSubsystem;
@@ -23,13 +22,6 @@ public class Shooter extends LoggedSubsystem {
     private final WebConstant webKd = WebConstant.of("Shooter", "kD", Constants.Shooter.Kd);
     private final WebConstant webKf = WebConstant.of("Shooter", "kF", Constants.Shooter.Kf);
 
-    public static Shooter getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Shooter();
-        }
-        return INSTANCE;
-    }
-
     private Shooter() {
         super(ShooterLogInputs.getInstance());
         motor = new PIDTalon(Ports.Shooter.MOTOR);
@@ -39,17 +31,24 @@ public class Shooter extends LoggedSubsystem {
         motor.updatePID(0, webKp.get(), webKi.get(), webKd.get(), webKf.get());
     }
 
+    public static Shooter getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Shooter();
+        }
+        return INSTANCE;
+    }
+
     public void setPower(double power) {
         motor.set(power);
+    }
+
+    public double getVelocity() {
+        return inputs.velocityRpm;
     }
 
     public void setVelocity(double velocity) {
         motor.set(ControlMode.Velocity, unitModel.toTicks100ms(Units.rpmToRps(velocity)));
         inputs.setpointRpm = velocity;
-    }
-
-    public double getVelocity() {
-        return inputs.velocityRpm;
     }
 
     public double getCurrent() {

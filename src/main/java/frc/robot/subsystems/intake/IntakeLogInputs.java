@@ -9,14 +9,15 @@ public class IntakeLogInputs implements LoggableInputs {
     public double current;
     public double power;
 
+    private IntakeLogInputs() {
+    }
+
     public static IntakeLogInputs getInstance() {
         if (INSTACE == null) {
             INSTACE = new IntakeLogInputs();
         }
         return INSTACE;
     }
-
-    private IntakeLogInputs() {}
 
     @Override
     public void toLog(LogTable table) {

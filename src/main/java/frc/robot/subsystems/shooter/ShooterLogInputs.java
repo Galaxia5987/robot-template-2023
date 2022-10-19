@@ -9,14 +9,14 @@ public class ShooterLogInputs implements LoggableInputs {
     public double setpointRpm;
     public double current;
 
+    private ShooterLogInputs() {
+    }
+
     public static ShooterLogInputs getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new ShooterLogInputs();
         }
         return INSTANCE;
-    }
-
-    private ShooterLogInputs() {
     }
 
     @Override

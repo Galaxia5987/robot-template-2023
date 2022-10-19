@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>Constants</title>
-        <script src="jquery.min.js"></script>
-        <script src="vue.js"></script>
-        <link rel="stylesheet" href="bootstrap.min.css" />
-    </head>
-    <body>
-        <nav class="navbar navbar-inverse navbar-static-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/index.html">TechFire</a>
-                </div>
-                <ul class="nav navbar-nav">
-                    <li><a href="constants.html">Constants</a></li>
-                    <li><a href="firescope.html">FireScope</a></li>
-                    <li><a href="values.html">Values</a></li>
-                </ul>
-            </div>
-        </nav>
-    <div id="main" class="container">
+<head>
+    <title>Constants</title>
+    <script src="jquery.min.js"></script>
+    <script src="vue.js"></script>
+    <link href="bootstrap.min.css" rel="stylesheet"/>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-static-top">
+    <div class="container">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/index.html">TechFire</a>
+        </div>
+        <ul class="nav navbar-nav">
+            <li><a href="constants.html">Constants</a></li>
+            <li><a href="firescope.html">FireScope</a></li>
+            <li><a href="values.html">Values</a></li>
+        </ul>
+    </div>
+</nav>
+<div class="container" id="main">
     <h1 class="page-header">Constants</h1>
     <table class="table">
         <tr v-for="(v,k) in constants">
             <th>{{k}}</th>
             <td>
-                <input class="form-control" v-model="constants[k]" @keydown="markChanged(k)"> 
-                <input v-show="staged[k]" type="submit" class="btn btn-success" @click="pushUpdate(k)" value="Update">
+                <input @keydown="markChanged(k)" class="form-control" v-model="constants[k]">
+                <input @click="pushUpdate(k)" class="btn btn-success" type="submit" v-show="staged[k]" value="Update">
             </td>
         </tr>
     </table>
-    </div>
-    
-    <script type="text/javascript">
+</div>
+
+<script type="text/javascript">
     var app = new Vue({
         el: '#main',
         data: {
@@ -66,6 +66,7 @@
     $.getJSON("/constants/list", function(data) {
         app.constants = data;
     });
-    </script>
-    </body>
+
+</script>
+</body>
 </html>

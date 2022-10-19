@@ -17,13 +17,6 @@ public class Intake extends LoggedSubsystem {
 
     private double prevPower;
 
-    public static Intake getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new Intake();
-        }
-        return INSTANCE;
-    }
-
     private Intake() {
         super(IntakeLogInputs.getInstance());
         motor.configFactoryDefault();
@@ -32,12 +25,11 @@ public class Intake extends LoggedSubsystem {
         prevPower = 0;
     }
 
-    public void setPower(double power) {
-        if (Double.compare(power, prevPower) == 0) {
-            return;
+    public static Intake getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new Intake();
         }
-        motor.set(ControlMode.PercentOutput, power);
-        prevPower = power;
+        return INSTANCE;
     }
 
     public void open() {
@@ -50,6 +42,14 @@ public class Intake extends LoggedSubsystem {
 
     public double getPower() {
         return inputs.power;
+    }
+
+    public void setPower(double power) {
+        if (Double.compare(power, prevPower) == 0) {
+            return;
+        }
+        motor.set(ControlMode.PercentOutput, power);
+        prevPower = power;
     }
 
     public double getCurrent() {
