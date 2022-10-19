@@ -8,6 +8,15 @@ import org.junit.runners.JUnit4;
 import java.io.File;
 import java.util.Scanner;
 
+/*
+Unit test class for the UnitModel class.
+Format for input is as such:
+    For every unit model:
+        1. Write the number of inputs.
+        2. After the number of inputs write pairs of inputs and solution,
+            divided by a space.
+    The unit models can be found within this class (in the array).
+ */
 @RunWith(JUnit4.class)
 public class UnitModelTest {
     public static final double TICKS_PER_ROTATION = 2048;
