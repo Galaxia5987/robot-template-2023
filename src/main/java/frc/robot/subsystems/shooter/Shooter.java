@@ -44,7 +44,7 @@ public class Shooter extends LoggedSubsystem {
     }
 
     public void setVelocity(double velocity) {
-        motor.set(ControlMode.Velocity, velocity);
+        motor.set(ControlMode.Velocity, unitModel.toTicks100ms(Units.rpmToRps(velocity)));
         inputs.setpointRpm = velocity;
     }
 
