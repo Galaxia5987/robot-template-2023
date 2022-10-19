@@ -73,6 +73,6 @@ public class Intake extends LoggedSubsystem {
 
     @Override
     public String getSubsystemName() {
-        return null;
+        return "Intake";
     }
 }

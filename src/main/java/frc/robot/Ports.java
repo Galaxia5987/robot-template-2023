@@ -9,4 +9,9 @@ public final class Ports {
         public static final int SOLENOID = 0;
         public static final TalonFXInvertType INVERSION = TalonFXInvertType.Clockwise;
     }
+
+    public static class Shooter {
+        public static final int MOTOR = 1;
+        public static final TalonFXInvertType INVERSION = TalonFXInvertType.Clockwise;
+    }
 }
