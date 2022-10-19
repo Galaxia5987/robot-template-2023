@@ -15,9 +15,4 @@ public class TestShooter {
     public void setPower() {
         shooter.setPower(1);
     }
-
-    @After
-    public void stop() {
-        shooter.stop();
-    }
 }

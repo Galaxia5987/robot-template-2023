@@ -13,9 +13,4 @@ public class TestIntake {
     public void setPower() {
         intake.setPower(1);
     }
-
-    @After
-    public void stop() {
-        intake.stop();
-    }
 }
