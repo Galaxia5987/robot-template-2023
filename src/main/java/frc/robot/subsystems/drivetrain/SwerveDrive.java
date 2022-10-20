@@ -1,6 +1,5 @@
 package frc.robot.subsystems.drivetrain;
 
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
@@ -8,7 +7,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.LoggedSubsystem;
@@ -18,7 +16,7 @@ import frc.robot.subsystems.LoggedSubsystem;
  * The class contains several convenient methods for controlling the robot and retrieving information about his state.
  */
 public class SwerveDrive extends LoggedSubsystem {
-    private static SwerveDrive FIELD_ORIENTED_INSTANCE = null;
+    private static SwerveDrive INSTANCE = null;
     private final SwerveModule[] modules = new SwerveModule[4];
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.SwerveDrive.SWERVE_POSITIONS);
     private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, new Rotation2d());
@@ -42,11 +40,11 @@ public class SwerveDrive extends LoggedSubsystem {
     /**
      * @return the swerve in field oriented mode.
      */
-    public static SwerveDrive getFieldOrientedInstance() {
-        if (FIELD_ORIENTED_INSTANCE == null) {
-            FIELD_ORIENTED_INSTANCE = new SwerveDrive();
+    public static SwerveDrive getInstance() {
+        if (INSTANCE == null) {
+            INSTANCE = new SwerveDrive();
         }
-        return FIELD_ORIENTED_INSTANCE;
+        return INSTANCE;
     }
 
     /**
