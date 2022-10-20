@@ -272,13 +272,10 @@ public class SwerveModule extends LoggedSubsystem {
         inputs.aVelocity = angleUnitModel.toVelocity(angleMotor.getSelectedSensorVelocity());
         inputs.aPosition = angleMotor.getSelectedSensorPosition();
         inputs.aAngle = new Rotation2d(Math.IEEEremainder(angleUnitModel.toUnits(angleMotor.getSelectedSensorPosition() - config.zeroPosition()), 2 * Math.PI)).getDegrees();
-        inputs.aKp = config.angleKp();
-        inputs.aKi = config.angleKi();
-        inputs.aKd = config.angleKd();
-        inputs.aKf = config.angleKf();
+        inputs.dCurrent = angleMotor.getStatorCurrent();
 
         inputs.dVelocity = driveUnitModel.toVelocity(driveMotor.getSelectedSensorVelocity());
-        inputs.dJ = config.j();
+        inputs.dCurrent = driveMotor.getSupplyCurrent();
     }
 
     @Override

@@ -19,12 +19,11 @@ import frc.robot.subsystems.LoggedSubsystem;
  */
 public class SwerveDrive extends LoggedSubsystem {
     private static SwerveDrive FIELD_ORIENTED_INSTANCE = null;
-    private static SwerveDrive ROBOT_ORIENTED_INSTANCE = null;
     private final SwerveModule[] modules = new SwerveModule[4];
     private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.SwerveDrive.SWERVE_POSITIONS);
     private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, new Rotation2d());
 
-    private final boolean fieldOriented;
+    private final boolean fieldOriented = true;
 
     private final SwerveDriveLogInputs inputs = SwerveDriveLogInputs.getInstance();
     private final ChassisSpeeds lastSpeeds = new ChassisSpeeds(0, 0, 0);
@@ -32,9 +31,8 @@ public class SwerveDrive extends LoggedSubsystem {
     private final double maxLinearAcceleration = 0;
     private final double maxRotationalAcceleration = 0;
 
-    private SwerveDrive(boolean fieldOriented) {
+    private SwerveDrive() {
         super(SwerveDriveLogInputs.getInstance());
-        this.fieldOriented = fieldOriented;
         modules[Constants.SwerveModule.frConfig.wheel()] = new SwerveModule(Constants.SwerveModule.frConfig);
         modules[Constants.SwerveModule.flConfig.wheel()] = new SwerveModule(Constants.SwerveModule.flConfig);
         modules[Constants.SwerveModule.rrConfig.wheel()] = new SwerveModule(Constants.SwerveModule.rrConfig);
@@ -42,32 +40,13 @@ public class SwerveDrive extends LoggedSubsystem {
     }
 
     /**
-     * @return the swerve in robot oriented mode.
-     */
-    public static SwerveDrive getRobotOrientedInstance() {
-        if (ROBOT_ORIENTED_INSTANCE == null) {
-            ROBOT_ORIENTED_INSTANCE = new SwerveDrive(false);
-        }
-        return ROBOT_ORIENTED_INSTANCE;
-    }
-
-    /**
      * @return the swerve in field oriented mode.
      */
     public static SwerveDrive getFieldOrientedInstance() {
         if (FIELD_ORIENTED_INSTANCE == null) {
-            FIELD_ORIENTED_INSTANCE = new SwerveDrive(true);
+            FIELD_ORIENTED_INSTANCE = new SwerveDrive();
         }
         return FIELD_ORIENTED_INSTANCE;
-    }
-
-    /**
-     * Gets the kinematics of the swerve.
-     *
-     * @return the kinematics of the swerve.
-     */
-    public SwerveDriveKinematics getKinematics() {
-        return kinematics;
     }
 
     /**
@@ -125,16 +104,6 @@ public class SwerveDrive extends LoggedSubsystem {
                 chassisSpeeds.omegaRadiansPerSecond,
                 Robot.getAngle()
         );
-    }
-
-    /**
-     * Gets a specific module, shouldn't be used for regular cases.
-     *
-     * @param index the index of the module.
-     * @return the corresponding module.
-     */
-    public SwerveModule getModule(int index) {
-        return modules[index];
     }
 
     /**

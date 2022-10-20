@@ -8,13 +8,10 @@ public class SwerveModuleLogInputs implements LoggableInputs {
     public double aVelocity;
     public double aPosition;
     public double aAngle;
-    public double aKp;
-    public double aKi;
-    public double aKd;
-    public double aKf;
+    public double aCurrent;
 
     public double dVelocity;
-    public double dJ;
+    public double dCurrent;
 
     private SwerveModuleLogInputs() {
     }
@@ -31,13 +28,10 @@ public class SwerveModuleLogInputs implements LoggableInputs {
         table.put("aVelocity", aVelocity);
         table.put("aPosition", aPosition);
         table.put("aAngle", aAngle);
-        table.put("aKp", aKp);
-        table.put("aKi", aKi);
-        table.put("aKd", aKd);
-        table.put("aKf", aKf);
+        table.put("aCurrent", aCurrent);
 
         table.put("dVelocity", dVelocity);
-        table.put("dJ", dJ);
+        table.put("dCurrent", dCurrent);
     }
 
     @Override
@@ -45,12 +39,7 @@ public class SwerveModuleLogInputs implements LoggableInputs {
         aVelocity = table.getDouble("aVelocity", aVelocity);
         aPosition = table.getDouble("aPosition", aPosition);
         aAngle = table.getDouble("aAngle", aAngle);
-        aKp = table.getDouble("aKp", aKp);
-        aKi = table.getDouble("aKi", aKi);
-        aKd = table.getDouble("aKd", aKd);
-        aKf = table.getDouble("aKf", aKf);
 
         dVelocity = table.getDouble("dVelocity", dVelocity);
-        dJ = table.getDouble("dJ", dJ);
     }
 }
