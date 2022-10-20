@@ -18,6 +18,7 @@ import edu.wpi.first.math.system.LinearSystem;
 import edu.wpi.first.math.system.LinearSystemLoop;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.math.system.plant.LinearSystemId;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Constants;
 import frc.robot.subsystems.LoggedSubsystem;
@@ -141,8 +142,8 @@ public class SwerveModule extends LoggedSubsystem {
      *
      * @param velocity the velocity of the module. [m/s]
      */
-    public void setVelocity(double velocity, boolean useStateSpace) {
-        if (useStateSpace) {
+    public void setVelocity(double velocity) {
+        if (DriverStation.isAutonomous()) {
             double timeInterval = currentTime - lastTime;
             double targetVelocity = Units.metersPerSecondToRps(velocity, Constants.SwerveDrive.WHEEL_RADIUS);
             double currentVelocity = Units.metersPerSecondToRps(getVelocity(), Constants.SwerveDrive.WHEEL_RADIUS);
@@ -194,7 +195,7 @@ public class SwerveModule extends LoggedSubsystem {
      * @param state the desired state.
      */
     public void setState(SwerveModuleState state) {
-        setVelocity(state.speedMetersPerSecond, false);
+        setVelocity(state.speedMetersPerSecond);
         setAngle(state.angle);
     }
 
