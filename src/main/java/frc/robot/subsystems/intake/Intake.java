@@ -45,9 +45,6 @@ public class Intake extends LoggedSubsystem {
     }
 
     public void setPower(double power) {
-        if (Double.compare(power, prevPower) == 0) {
-            return;
-        }
         motor.set(ControlMode.PercentOutput, power);
         prevPower = power;
     }
