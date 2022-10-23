@@ -21,7 +21,7 @@ public class AngleUtilTest {
                 try {
                     AngleUtil.Angle angle = inputAngle(in);
                     Assert.assertEquals(
-                            "Absolute test - " + angle.toString(),
+                            "Absolute test\n" + angle.toString(),
                             in.nextDouble(),
                             angle.changeCoordinateSystem(AngleUtil.CoordinateSystem.ABSOLUTE).value,
                             EPSILON
@@ -52,10 +52,9 @@ public class AngleUtilTest {
     }
 
     public AngleUtil.Angle inputAngle(Scanner in) {
-        boolean invertX = in.nextInt() != 0,
-                invertY = in.nextInt() != 0,
-                clockwise = in.nextInt() == 0;
+        int zeroAngle = in.nextInt();
+        boolean clockwise = in.nextInt() == 0;
         double angle = in.nextDouble();
-        return new AngleUtil.Angle(AngleUtil.CoordinateSystem.of(invertX, invertY, clockwise), angle);
+        return new AngleUtil.Angle(AngleUtil.CoordinateSystem.of(zeroAngle, clockwise), angle);
     }
 }

@@ -5,22 +5,19 @@ import edu.wpi.first.math.geometry.Rotation2d;
 public class AngleUtil {
 
     public static class CoordinateSystem {
-        public static CoordinateSystem ABSOLUTE = of(false, false, true);
+        public static CoordinateSystem ABSOLUTE = of(0, false);
 
         public XDirection xDirection;
-        public YDirection yDirection;
         public ThetaDirection thetaDirection;
 
-        public CoordinateSystem(XDirection xDirection, YDirection yDirection, ThetaDirection thetaDirection) {
+        public CoordinateSystem(XDirection xDirection, ThetaDirection thetaDirection) {
             this.xDirection = xDirection;
-            this.yDirection = yDirection;
             this.thetaDirection = thetaDirection;
         }
 
-        public static CoordinateSystem of(boolean invertX, boolean invertY, boolean clockwise) {
+        public static CoordinateSystem of(int xDirection, boolean clockwise) {
             return new CoordinateSystem(
-                    XDirection.of(invertX),
-                    YDirection.of(invertY),
+                    XDirection.of(xDirection),
                     ThetaDirection.of(!clockwise)
             );
         }
@@ -45,16 +42,18 @@ public class AngleUtil {
         }
 
         public Angle changeCoordinateSystem(CoordinateSystem newCoordinateSystem) {
-            double val = this.value;
-            CoordinateSystem coordinateSystem = this.coordinateSystem;
-            val *= coordinateSystem.thetaDirection.get() *
-                    newCoordinateSystem.thetaDirection.get() *
-                    coordinateSystem.yDirection.get() *
-                    newCoordinateSystem.yDirection.get();
-            if (newCoordinateSystem.xDirection.invert ^ coordinateSystem.xDirection.invert) {
-                val = 180 - val;
+            double absoluteAngle, newAngle;
+            if (coordinateSystem.thetaDirection.clockwise) {
+                absoluteAngle = coordinateSystem.xDirection.zeroVal - value;
+            } else {
+                absoluteAngle = coordinateSystem.xDirection.zeroVal + value;
             }
-            return new Angle(newCoordinateSystem, val);
+            newAngle = absoluteAngle - newCoordinateSystem.xDirection.zeroVal;
+            newAngle = (newAngle < 0 ? newAngle + 360 : newAngle);
+            if (!newCoordinateSystem.thetaDirection.clockwise) {
+                newAngle = (360 - newAngle) % 360;
+            }
+            return new Angle(newCoordinateSystem, newAngle);
         }
 
         public double minus(Angle other) {
@@ -66,47 +65,33 @@ public class AngleUtil {
             return "Angle: \n" +
                     "   Coordinate System: " +
                         coordinateSystem.xDirection.name() + ", " +
-                        coordinateSystem.yDirection.name() + ", " +
                         coordinateSystem.thetaDirection.name() + "\n" +
                     "   Value: " + value;
         }
     }
 
     public enum XDirection {
-        RIGHT(false),
-        LEFT(true);
+        RIGHT(0),
+        UP(90),
+        LEFT(180),
+        DOWN(270);
 
-        public final boolean invert;
+        public final int zeroVal;
 
-        XDirection(boolean invert) {
-            this.invert = invert;
+        XDirection(int zeroVal) {
+            this.zeroVal = zeroVal;
         }
 
-        public int get() {
-            return invert ? -1 : 1;
-        }
-
-        public static XDirection of(boolean invert) {
-            return invert ? LEFT : RIGHT;
-        }
-    }
-
-    public enum YDirection {
-        UP(false),
-        DOWN(true);
-
-        public final boolean invert;
-
-        YDirection(boolean invert) {
-            this.invert = invert;
-        }
-
-        public int get() {
-            return invert ? -1 : 1;
-        }
-
-        public static YDirection of(boolean invert) {
-            return invert ? DOWN : UP;
+        public static XDirection of(int zeroVal) {
+            switch (zeroVal) {
+                case 0:
+                    return RIGHT;
+                case 90:
+                    return UP;
+                case 180:
+                    return LEFT;
+            }
+            return DOWN;
         }
     }
 
@@ -114,14 +99,14 @@ public class AngleUtil {
         COUNTER_CLOCKWISE(false),
         CLOCKWISE(true);
 
-        public final boolean invert;
+        public final boolean clockwise;
 
-        ThetaDirection(boolean invert) {
-            this.invert = invert;
+        ThetaDirection(boolean clockwise) {
+            this.clockwise = clockwise;
         }
 
         public int get() {
-            return invert ? -1 : 1;
+            return clockwise ? -1 : 1;
         }
 
         public static ThetaDirection of(boolean invert) {
