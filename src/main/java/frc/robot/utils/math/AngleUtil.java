@@ -60,6 +60,16 @@ public class AngleUtil {
         public double minus(Angle other) {
             return getAbsoluteValue().value - other.getAbsoluteValue().value;
         }
+
+        @Override
+        public String toString() {
+            return "Angle: \n" +
+                    "   Coordinate System: " +
+                        coordinateSystem.xDirection.name() + ", " +
+                        coordinateSystem.yDirection.name() + ", " +
+                        coordinateSystem.thetaDirection.name() + "\n" +
+                    "   Value: " + value;
+        }
     }
 
     public enum XDirection {
