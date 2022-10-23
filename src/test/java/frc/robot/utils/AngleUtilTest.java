@@ -23,7 +23,7 @@ public class AngleUtilTest {
                     Assert.assertEquals(
                             "Absolute test\n" + angle.toString(),
                             in.nextDouble(),
-                            angle.changeCoordinateSystem(AngleUtil.CoordinateSystem.ABSOLUTE).value,
+                            angle.getAbsoluteAngle().value,
                             EPSILON
                     );
                 } catch (Throwable t) {

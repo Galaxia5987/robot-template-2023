@@ -37,27 +37,18 @@ public class AngleUtil {
             this.value = value.getDegrees();
         }
 
-        public Angle getAbsoluteValue() {
-            return changeCoordinateSystem(CoordinateSystem.ABSOLUTE);
-        }
-
-        public Angle changeCoordinateSystem(CoordinateSystem newCoordinateSystem) {
-            double absoluteAngle, newAngle;
+        public Angle getAbsoluteAngle() {
+            double absoluteAngle;
             if (coordinateSystem.thetaDirection.clockwise) {
                 absoluteAngle = coordinateSystem.xDirection.zeroVal - value;
             } else {
                 absoluteAngle = coordinateSystem.xDirection.zeroVal + value;
             }
-            newAngle = absoluteAngle - newCoordinateSystem.xDirection.zeroVal;
-            newAngle = (newAngle < 0 ? newAngle + 360 : newAngle);
-            if (!newCoordinateSystem.thetaDirection.clockwise) {
-                newAngle = (360 - newAngle) % 360;
-            }
-            return new Angle(newCoordinateSystem, newAngle);
+            return new Angle(CoordinateSystem.ABSOLUTE, absoluteAngle);
         }
 
         public double minus(Angle other) {
-            return getAbsoluteValue().value - other.getAbsoluteValue().value;
+            return getAbsoluteAngle().value - other.getAbsoluteAngle().value;
         }
 
         @Override
