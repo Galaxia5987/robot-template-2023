@@ -57,13 +57,8 @@ public class AngleUtil {
             return new Angle(newCoordinateSystem, val);
         }
 
-        public Angle minus(Angle other, CoordinateSystem resSystem) {
-            double val = getAbsoluteValue().value - other.getAbsoluteValue().value;
-            return new Angle(resSystem, val);
-        }
-
-        public Angle minus(Angle other) {
-            return minus(other, CoordinateSystem.ABSOLUTE);
+        public double minus(Angle other) {
+            return getAbsoluteValue().value - other.getAbsoluteValue().value;
         }
     }
 
