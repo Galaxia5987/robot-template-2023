@@ -68,8 +68,4 @@ public class DoubleInterpolationTest {
             }
         }
     }
-
-    public void printStartMessage() {
-        System.out.println("Testing Interpolation...");
-    }
 }
