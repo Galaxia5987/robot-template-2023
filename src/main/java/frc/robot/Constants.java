@@ -46,6 +46,10 @@ public final class Constants {
         public static final int ANGLE_CURVE_STRENGTH = 1;
         public static final int ANGLE_CRUISE_VELOCITY = 400;
         public static final int ANGLE_MOTION_ACCELERATION = 1300;
+        public static final double XY_SLEW_RATE_LIMIT = 3.0;
+        public static final double ROTATION_SLEW_RATE_LIMIT = 6.0;
+        public static final double TARGET_ADJUST_Kp = 0.03;
+        public static final double TARGET_ADJUST_Kf = 0.1;
         private static final double Rx = SwerveDrive.ROBOT_LENGTH / 2; // [m]
         private static final double Ry = SwerveDrive.ROBOT_WIDTH / 2; // [m]
         // Axis systems
@@ -55,12 +59,6 @@ public final class Constants {
                 new Translation2d(-Rx, -Ry),
                 new Translation2d(-Rx, Ry)
         };
-
-        public static final double XY_SLEW_RATE_LIMIT = 3.0;
-        public static final double ROTATION_SLEW_RATE_LIMIT = 6.0;
-
-        public static final double TARGET_ADJUST_Kp = 0.03;
-        public static final double TARGET_ADJUST_Kf = 0.1;
     }
 
     public static final class SwerveModule {

@@ -23,61 +23,6 @@ public class AngleUtil {
         return new Angle(coordinateSystem, angle).getAbsoluteAngle();
     }
 
-    public static class CoordinateSystem {
-        public XDirection xDirection;
-        public ThetaDirection thetaDirection;
-
-        public CoordinateSystem(XDirection xDirection, ThetaDirection thetaDirection) {
-            this.xDirection = xDirection;
-            this.thetaDirection = thetaDirection;
-        }
-
-        public static CoordinateSystem of(int xDirection, boolean clockwise) {
-            return new CoordinateSystem(
-                    XDirection.of(xDirection),
-                    ThetaDirection.of(clockwise)
-            );
-        }
-    }
-
-    public static class Angle {
-        public CoordinateSystem coordinateSystem;
-        public double value;
-
-        public Angle(CoordinateSystem coordinateSystem, double value) {
-            this.coordinateSystem = coordinateSystem;
-            this.value = normalize(value);
-        }
-
-        public Angle(CoordinateSystem coordinateSystem, Rotation2d value) {
-            this(coordinateSystem, value.getDegrees());
-        }
-
-        public double getAbsoluteAngle() {
-            double absoluteAngle =
-                    coordinateSystem.xDirection.zeroVal +
-                    coordinateSystem.thetaDirection.get() * value;
-            return normalize(absoluteAngle);
-        }
-
-        public double minus(Angle other) {
-            return normalize(getAbsoluteAngle() - other.getAbsoluteAngle());
-        }
-
-        public double plus(Angle other) {
-            return normalize(getAbsoluteAngle() + other.getAbsoluteAngle());
-        }
-
-        @Override
-        public String toString() {
-            return "Angle: \n" +
-                    "   Coordinate System: " +
-                        coordinateSystem.xDirection.name() + ", " +
-                        coordinateSystem.thetaDirection.name() + "\n" +
-                    "   Value: " + value;
-        }
-    }
-
     public enum XDirection {
         RIGHT(0),
         UP(90),
@@ -113,12 +58,67 @@ public class AngleUtil {
             this.clockwise = clockwise;
         }
 
+        public static ThetaDirection of(boolean invert) {
+            return invert ? CLOCKWISE : COUNTER_CLOCKWISE;
+        }
+
         public int get() {
             return clockwise ? -1 : 1;
         }
+    }
 
-        public static ThetaDirection of(boolean invert) {
-            return invert ? CLOCKWISE : COUNTER_CLOCKWISE;
+    public static class CoordinateSystem {
+        public XDirection xDirection;
+        public ThetaDirection thetaDirection;
+
+        public CoordinateSystem(XDirection xDirection, ThetaDirection thetaDirection) {
+            this.xDirection = xDirection;
+            this.thetaDirection = thetaDirection;
+        }
+
+        public static CoordinateSystem of(int xDirection, boolean clockwise) {
+            return new CoordinateSystem(
+                    XDirection.of(xDirection),
+                    ThetaDirection.of(clockwise)
+            );
+        }
+    }
+
+    public static class Angle {
+        public CoordinateSystem coordinateSystem;
+        public double value;
+
+        public Angle(CoordinateSystem coordinateSystem, double value) {
+            this.coordinateSystem = coordinateSystem;
+            this.value = normalize(value);
+        }
+
+        public Angle(CoordinateSystem coordinateSystem, Rotation2d value) {
+            this(coordinateSystem, value.getDegrees());
+        }
+
+        public double getAbsoluteAngle() {
+            double absoluteAngle =
+                    coordinateSystem.xDirection.zeroVal +
+                            coordinateSystem.thetaDirection.get() * value;
+            return normalize(absoluteAngle);
+        }
+
+        public double minus(Angle other) {
+            return normalize(getAbsoluteAngle() - other.getAbsoluteAngle());
+        }
+
+        public double plus(Angle other) {
+            return normalize(getAbsoluteAngle() + other.getAbsoluteAngle());
+        }
+
+        @Override
+        public String toString() {
+            return "Angle: \n" +
+                    "   Coordinate System: " +
+                    coordinateSystem.xDirection.name() + ", " +
+                    coordinateSystem.thetaDirection.name() + "\n" +
+                    "   Value: " + value;
         }
     }
 }

@@ -11,23 +11,20 @@ import frc.robot.utils.controllers.PIDFController;
 
 import java.util.function.DoubleSupplier;
 
-public abstract class HolonomicDrive extends CommandBase {
+public class HolonomicDrive extends CommandBase {
     protected final SwerveDrive swerveDrive = SwerveDrive.getInstance();
-
-    private final DoubleSupplier forward;
-    private final DoubleSupplier strafe;
-    private final DoubleSupplier rotation;
-
     protected final PIDFController adjustController = new PIDFController(
             Constants.SwerveDrive.TARGET_ADJUST_Kp,
             0, 0,
             Constants.SwerveDrive.TARGET_ADJUST_Kf) {{
-                enableContinuousInput(-180, 180);
+        enableContinuousInput(-180, 180);
     }};
-
     protected final SlewRateLimiter forwardLimiter = new SlewRateLimiter(Constants.SwerveDrive.XY_SLEW_RATE_LIMIT);
     protected final SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.SwerveDrive.XY_SLEW_RATE_LIMIT);
     protected final SlewRateLimiter rotationLimiter = new SlewRateLimiter(Constants.SwerveDrive.ROTATION_SLEW_RATE_LIMIT);
+    private final DoubleSupplier forward;
+    private final DoubleSupplier strafe;
+    private final DoubleSupplier rotation;
 
     public HolonomicDrive(DoubleSupplier forward, DoubleSupplier strafe, DoubleSupplier rotation) {
         this.forward = forward;

@@ -26,9 +26,43 @@ import org.littletonrobotics.junction.io.LogSocketServer;
 public class Robot extends LoggedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     public static boolean debug = false;
+    private static Rotation2d zeroAngle = new Rotation2d();
     private RobotContainer robotContainer;
     private Command autonomousCommand;
-    private static Rotation2d zeroAngle = new Rotation2d();
+
+    /**
+     * Resets the angle of the navx to the current angle.
+     */
+    public static void resetAngle() {
+        resetAngle(new Rotation2d());
+    }
+
+    /**
+     * Resets the angle of the navx to the current angle.
+     *
+     * @param angle the angle in -180 to 180 degrees coordinate system.
+     */
+    public static void resetAngle(Rotation2d angle) {
+        zeroAngle = getRawAngle().minus(angle);
+    }
+
+    /**
+     * Gets the current angle of the robot in respect to the start angle.
+     *
+     * @return the current angle of the robot in respect to the start angle.
+     */
+    public static Rotation2d getAngle() {
+        return getRawAngle().minus(zeroAngle);
+    }
+
+    /**
+     * Gets the raw angle from the navx.
+     *
+     * @return the angle of the robot in respect to the angle of the robot initiation time.
+     */
+    public static Rotation2d getRawAngle() {
+        return Robot.navx.getRotation2d();
+    }
 
     /**
      * This function is run when the robot is first started up and should be used for any
@@ -137,39 +171,5 @@ public class Robot extends LoggedRobot {
      */
     @Override
     public void testPeriodic() {
-    }
-
-    /**
-     * Resets the angle of the navx to the current angle.
-     */
-    public static void resetAngle() {
-        resetAngle(new Rotation2d());
-    }
-
-    /**
-     * Resets the angle of the navx to the current angle.
-     *
-     * @param angle the angle in -180 to 180 degrees coordinate system.
-     */
-    public static void resetAngle(Rotation2d angle) {
-        zeroAngle = getRawAngle().minus(angle);
-    }
-
-    /**
-     * Gets the current angle of the robot in respect to the start angle.
-     *
-     * @return the current angle of the robot in respect to the start angle.
-     */
-    public static Rotation2d getAngle() {
-        return getRawAngle().minus(zeroAngle);
-    }
-
-    /**
-     * Gets the raw angle from the navx.
-     *
-     * @return the angle of the robot in respect to the angle of the robot initiation time.
-     */
-    public static Rotation2d getRawAngle() {
-        return Robot.navx.getRotation2d();
     }
 }
