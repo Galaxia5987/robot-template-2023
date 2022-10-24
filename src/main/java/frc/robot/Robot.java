@@ -6,7 +6,6 @@ package frc.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +26,6 @@ import org.littletonrobotics.junction.io.LogSocketServer;
 public class Robot extends LoggedRobot {
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
     public static boolean debug = false;
-    public PowerDistribution pdp = new PowerDistribution();
     private RobotContainer robotContainer;
     private Command autonomousCommand;
     private static Rotation2d zeroAngle = new Rotation2d();
