@@ -24,8 +24,8 @@ import org.littletonrobotics.junction.io.LogSocketServer;
  * project.
  */
 public class Robot extends LoggedRobot {
-    public static boolean debug = false;
     public static final AHRS navx = new AHRS(SPI.Port.kMXP);
+    public static boolean debug = false;
     public PowerDistribution pdp = new PowerDistribution();
     private RobotContainer robotContainer;
     private Command autonomousCommand;

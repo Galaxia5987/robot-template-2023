@@ -39,7 +39,7 @@ public class PIDTalon extends WPI_TalonFX {
     }
 
     public ErrorCode updatePID(int slot, double kP, double kI, double kD, double kF) {
-        ErrorCode[] errorCodes = new ErrorCode[] {
+        ErrorCode[] errorCodes = new ErrorCode[]{
                 ErrorCode.OK,
                 ErrorCode.OK,
                 ErrorCode.OK,
