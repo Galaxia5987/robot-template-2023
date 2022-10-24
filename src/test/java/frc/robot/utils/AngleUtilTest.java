@@ -53,7 +53,7 @@ public class AngleUtilTest {
 
     public AngleUtil.Angle inputAngle(Scanner in) {
         int zeroAngle = in.nextInt();
-        boolean clockwise = in.nextInt() == 0;
+        boolean clockwise = in.nextInt() != 0;
         double angle = in.nextDouble();
         return new AngleUtil.Angle(AngleUtil.CoordinateSystem.of(zeroAngle, clockwise), angle);
     }

@@ -35,7 +35,7 @@ public class AngleUtil {
         public static CoordinateSystem of(int xDirection, boolean clockwise) {
             return new CoordinateSystem(
                     XDirection.of(xDirection),
-                    ThetaDirection.of(!clockwise)
+                    ThetaDirection.of(clockwise)
             );
         }
     }
