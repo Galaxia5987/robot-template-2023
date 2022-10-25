@@ -43,7 +43,7 @@ public class IntegratedUtils {
             var robotAngle = new AngleUtil.Angle(
                     90, false,
                     Robot.getAngle());
-            return AngleUtil.minimizeAbsolute(absoluteAngleToTarget.minus(robotAngle));
+            return AngleUtil.absoluteAngleToYaw(absoluteAngleToTarget.minus(robotAngle));
         });
     }
 }

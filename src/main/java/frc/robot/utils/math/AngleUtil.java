@@ -34,7 +34,7 @@ public class AngleUtil {
         return angle % 360;
     }
 
-    public static double minimizeAbsolute(double angle) {
+    public static double absoluteAngleToYaw(double angle) {
         angle = normalize(angle);
         while (angle > 180) {
             angle -= 360;
@@ -42,8 +42,8 @@ public class AngleUtil {
         return angle;
     }
 
-    public static Rotation2d minimizeAbsolute(Rotation2d angle) {
-        return Rotation2d.fromDegrees(minimizeAbsolute(angle.getDegrees()));
+    public static Rotation2d absoluteAngleToYaw(Rotation2d angle) {
+        return Rotation2d.fromDegrees(absoluteAngleToYaw(angle.getDegrees()));
     }
 
     public static double getAbsoluteAngle(ZeroVector zeroVector, ThetaDirection thetaDirection, double angle) {
