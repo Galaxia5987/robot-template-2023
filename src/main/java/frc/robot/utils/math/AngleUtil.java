@@ -42,6 +42,10 @@ public class AngleUtil {
         return angle;
     }
 
+    public static Rotation2d minimizeAbsolute(Rotation2d angle) {
+        return Rotation2d.fromDegrees(minimizeAbsolute(angle.getDegrees()));
+    }
+
     public static double getAbsoluteAngle(ZeroVector zeroVector, ThetaDirection thetaDirection, double angle) {
         return getAbsoluteAngle(new CoordinateSystem(zeroVector, thetaDirection), angle);
     }
