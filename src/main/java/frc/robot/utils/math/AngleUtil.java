@@ -34,6 +34,14 @@ public class AngleUtil {
         return angle % 360;
     }
 
+    public static double minimizeAbsolute(double angle) {
+        angle = normalize(angle);
+        while (angle > 180) {
+            angle -= 360;
+        }
+        return angle;
+    }
+
     public static double getAbsoluteAngle(ZeroVector zeroVector, ThetaDirection thetaDirection, double angle) {
         return getAbsoluteAngle(new CoordinateSystem(zeroVector, thetaDirection), angle);
     }

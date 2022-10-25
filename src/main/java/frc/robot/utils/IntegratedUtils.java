@@ -6,6 +6,7 @@ import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 import frc.robot.subsystems.vision.Limelight;
+import frc.robot.utils.math.AngleUtil;
 
 /**
  * This class constitutes all the information provided by multiple subsystem.
@@ -36,7 +37,13 @@ public class IntegratedUtils {
     public static double angleToTarget() {
         return limelight.getYaw().orElseGet(() -> {
             var toTarget = swerveDrive.getPose().minus(Constants.Vision.HUB_POSE);
-            return Math.IEEEremainder(-Robot.getAngle().getDegrees() + Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX())), 360.0);
+            var absoluteAngleToTarget = new AngleUtil.Angle(
+                    AngleUtil.CoordinateSystem.of(90, false),
+                    Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX())));
+            var robotAngle = new AngleUtil.Angle(
+                    AngleUtil.CoordinateSystem.of(90, false),
+                    Robot.getAngle());
+            return AngleUtil.minimizeAbsolute(absoluteAngleToTarget.minus(robotAngle));
         });
     }
 }
