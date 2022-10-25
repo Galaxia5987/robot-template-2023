@@ -87,6 +87,14 @@ public class AngleUtil {
             this(coordinateSystem, value.getDegrees());
         }
 
+        public Angle(double zeroVector, boolean clockwise, double value) {
+            this(CoordinateSystem.of(zeroVector, clockwise), value);
+        }
+
+        public Angle(double zeroVector, boolean clockwise, Rotation2d value) {
+            this(CoordinateSystem.of(zeroVector, clockwise), value);
+        }
+
         public double getAbsoluteAngle() {
             double absoluteAngle =
                     coordinateSystem.zeroVector.zeroAbsoluteAngle +
@@ -95,11 +103,11 @@ public class AngleUtil {
         }
 
         public double minus(Angle other) {
-            return normalize(getAbsoluteAngle() - other.getAbsoluteAngle());
+            return getAbsoluteAngle() - other.getAbsoluteAngle();
         }
 
         public double plus(Angle other) {
-            return normalize(getAbsoluteAngle() + other.getAbsoluteAngle());
+            return getAbsoluteAngle() + other.getAbsoluteAngle();
         }
 
         @Override
@@ -144,6 +152,5 @@ public class AngleUtil {
         public ZeroVector(double zeroAbsoluteAngle) {
             this.zeroAbsoluteAngle = normalize(zeroAbsoluteAngle);
         }
-
     }
 }
