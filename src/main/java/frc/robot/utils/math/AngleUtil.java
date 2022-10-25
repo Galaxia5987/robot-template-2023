@@ -2,6 +2,21 @@ package frc.robot.utils.math;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 
+/*
+This class is used for conversions between angles with different
+coordinate systems.
+
+Each coordinate system is described as such:
+
+    The vector representing the zero angle is called the ZeroVector,
+    which can be anywhere between 0 and 360.
+
+    The direction of positive increase in the angle is called ThetaDirection,
+    which can be either clockwise or counter-clockwise.
+
+The absolute/default coordinate system is `RIGHT_COUNTER_CLOCKWISE`,
+all conversions to an absolute angle will be to this system.
+ */
 public class AngleUtil {
     public static final CoordinateSystem RIGHT_COUNTER_CLOCKWISE = CoordinateSystem.of(0, false);
     public static final CoordinateSystem RIGHT_CLOCKWISE = CoordinateSystem.of(0, true);
@@ -19,33 +34,16 @@ public class AngleUtil {
         return angle % 360;
     }
 
-    public static double getAbsoluteAngle(CoordinateSystem coordinateSystem, double angle) {
-        return new Angle(coordinateSystem, angle).getAbsoluteAngle();
+    public static double getAbsoluteAngle(ZeroVector zeroVector, ThetaDirection thetaDirection, double angle) {
+        return getAbsoluteAngle(new CoordinateSystem(zeroVector, thetaDirection), angle);
     }
 
-    public enum XDirection {
-        RIGHT(0),
-        UP(90),
-        LEFT(180),
-        DOWN(270);
+    public static double getAbsoluteAngle(double zeroVector, ThetaDirection thetaDirection, double angle) {
+        return getAbsoluteAngle(new CoordinateSystem(zeroVector, thetaDirection), angle);
+    }
 
-        public final int zeroVal;
-
-        XDirection(int zeroVal) {
-            this.zeroVal = zeroVal;
-        }
-
-        public static XDirection of(int zeroVal) {
-            switch (zeroVal) {
-                case 0:
-                    return RIGHT;
-                case 90:
-                    return UP;
-                case 180:
-                    return LEFT;
-            }
-            return DOWN;
-        }
+    public static double getAbsoluteAngle(CoordinateSystem coordinateSystem, double angle) {
+        return new Angle(coordinateSystem, angle).getAbsoluteAngle();
     }
 
     public enum ThetaDirection {
@@ -65,23 +63,7 @@ public class AngleUtil {
         public int get() {
             return clockwise ? -1 : 1;
         }
-    }
 
-    public static class CoordinateSystem {
-        public XDirection xDirection;
-        public ThetaDirection thetaDirection;
-
-        public CoordinateSystem(XDirection xDirection, ThetaDirection thetaDirection) {
-            this.xDirection = xDirection;
-            this.thetaDirection = thetaDirection;
-        }
-
-        public static CoordinateSystem of(int xDirection, boolean clockwise) {
-            return new CoordinateSystem(
-                    XDirection.of(xDirection),
-                    ThetaDirection.of(clockwise)
-            );
-        }
     }
 
     public static class Angle {
@@ -99,7 +81,7 @@ public class AngleUtil {
 
         public double getAbsoluteAngle() {
             double absoluteAngle =
-                    coordinateSystem.xDirection.zeroVal +
+                    coordinateSystem.zeroVector.zeroAbsoluteAngle +
                             coordinateSystem.thetaDirection.get() * value;
             return normalize(absoluteAngle);
         }
@@ -116,9 +98,44 @@ public class AngleUtil {
         public String toString() {
             return "Angle: \n" +
                     "   Coordinate System: " +
-                    coordinateSystem.xDirection.name() + ", " +
+                    coordinateSystem.zeroVector.toString() + ", " +
                     coordinateSystem.thetaDirection.name() + "\n" +
                     "   Value: " + value;
         }
+    }
+
+    public static class CoordinateSystem {
+        public ZeroVector zeroVector;
+        public ThetaDirection thetaDirection;
+
+        public CoordinateSystem(ZeroVector zeroVector, ThetaDirection thetaDirection) {
+            this.zeroVector = zeroVector;
+            this.thetaDirection = thetaDirection;
+        }
+
+        public CoordinateSystem(double zeroVector, ThetaDirection thetaDirection) {
+            this(new ZeroVector(zeroVector), thetaDirection);
+        }
+
+        public static CoordinateSystem of(double zeroVector, boolean clockwise) {
+            return new CoordinateSystem(
+                    new ZeroVector(zeroVector),
+                    ThetaDirection.of(clockwise)
+            );
+        }
+    }
+
+    public static class ZeroVector {
+        public static final double RIGHT = 0;
+        public static final double UP = 90;
+        public static final double LEFT = 180;
+        public static final double DOWN = 270;
+
+        public final double zeroAbsoluteAngle;
+
+        public ZeroVector(double zeroAbsoluteAngle) {
+            this.zeroAbsoluteAngle = normalize(zeroAbsoluteAngle);
+        }
+
     }
 }
