@@ -18,11 +18,7 @@ public class PIDFController extends PIDController {
     @Override
     public double calculate(double measurement, double setpoint) {
         setSetpoint(setpoint);
-        double val = super.calculate(measurement);
-        if (val != 0) {
-            val += Math.signum(val) * kF;
-        }
-        return val;
+        return this.calculate(measurement);
     }
 
     @Override

@@ -31,22 +31,6 @@ public class AngleUtilTest {
                     t.printStackTrace();
                 }
             }
-
-            int numDifferenceTests = in.nextInt();
-            for (int i = 0; i < numDifferenceTests; i++) {
-                try {
-                    AngleUtil.Angle from = inputAngle(in);
-                    AngleUtil.Angle to = inputAngle(in);
-                    Assert.assertEquals(
-                            "Difference test\n" + from.toString() + "\n" + to.toString() + "\n",
-                            in.nextDouble(),
-                            from.minus(to),
-                            EPSILON
-                    );
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
         } catch (Throwable t) {
             t.printStackTrace();
         }

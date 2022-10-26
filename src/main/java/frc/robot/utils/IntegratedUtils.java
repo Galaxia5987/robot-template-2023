@@ -38,10 +38,10 @@ public class IntegratedUtils {
         return limelight.getYaw().orElseGet(() -> {
             var toTarget = swerveDrive.getPose().minus(Constants.Vision.HUB_POSE);
             var absoluteAngleToTarget = new AngleUtil.Angle(
-                    90, false,
+                    AngleUtil.UP_COUNTER_CLOCKWISE,
                     Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX())));
-            var robotAngle = new AngleUtil.Angle(
-                    90, false,
+                    var robotAngle = new AngleUtil.Angle(
+                    AngleUtil.UP_COUNTER_CLOCKWISE,
                     Robot.getAngle());
             return AngleUtil.absoluteAngleToYaw(absoluteAngleToTarget.minus(robotAngle));
         });
