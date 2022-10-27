@@ -1,6 +1,5 @@
 package frc.robot.utils.math.spline;
 
-import frc.robot.utils.math.Rotation2;
 import frc.robot.utils.math.Vector2;
 import org.ejml.simple.SimpleMatrix;
 
@@ -62,10 +61,6 @@ public class Spline {
         SimpleMatrix result = SplineHelper.createPowerMatrix(getDegree(), t).mult(basisMatrix).mult(basisWeightMatrix);
 
         return new Vector2(result.get(0), result.get(1));
-    }
-
-    public Rotation2 getHeading(double t) {
-        return derivative().getPoint(t).getAngle();
     }
 
     public double getCurvature(double t) {
