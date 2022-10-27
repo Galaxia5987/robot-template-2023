@@ -1,6 +1,7 @@
 package frc.robot.utils;
 
 public class Utils {
+    public static final double EPSILON = 1e-9;
 
     /**
      * sets the value of the joystick to 0 if the value is less than the threshold
@@ -26,4 +27,11 @@ public class Utils {
         return (input - (Math.signum(input) * threshold)) / (1 - threshold);
     }
 
+    public static boolean epsilonEquals(double a, double b) {
+        return epsilonEquals(a, b, EPSILON);
+    }
+
+    public static boolean epsilonEquals(double a, double b, double maxError) {
+        return deadband(a - b, maxError) == 0;
+    }
 }
