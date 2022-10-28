@@ -36,7 +36,6 @@ public class Hood extends LoggedSubsystem {
         motor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
 
         System.out.println("Absolute: " + (encoder.isConnected()));
-        //motor.configIntegratedSensorInitializationStrategy(SensorInitializationStrategy.BootToZero);
         motor.setSelectedSensorPosition(0);
         motor.configMotionCruiseVelocity(unitModelPosition.toTicks100ms(Constants.Hood.MAX_VELOCITY));
         motor.configMotionAcceleration(unitModelPosition.toTicks100ms(Constants.Hood.MAX_ACCELERATION));
