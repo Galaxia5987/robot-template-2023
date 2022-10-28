@@ -1,6 +1,7 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
+import edu.wpi.first.wpilibj.I2C;
 
 public final class Ports {
 
@@ -43,5 +44,16 @@ public final class Ports {
     public static class Shooter {
         public static final int MOTOR = 1;
         public static final TalonFXInvertType INVERSION = TalonFXInvertType.Clockwise;
+    }
+
+    public static class Hood {
+        public static final int MOTOR = 20;
+        public static final TalonFXInvertType INVERSION = TalonFXInvertType.Clockwise;
+    }
+
+    public static class Conveyor {
+        public static final int MOTOR_FROM_INTAKE = 21;
+        public static final int MOTOR_TO_SHOOTER = 11;
+        public static final int PRE_FLAP_BEAM = 8;
     }
 }

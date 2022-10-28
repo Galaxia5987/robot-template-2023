@@ -6,7 +6,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import frc.robot.subsystems.drivetrain.config.SwerveModuleConfigBase;
+import frc.robot.utils.math.InterpolatingDoubleMap;
 import org.photonvision.SimVisionTarget;
+
+import java.util.HashMap;
 
 import static frc.robot.Ports.SwerveDrive.*;
 
@@ -105,31 +108,20 @@ public final class Constants {
     }
 
     public static class Vision { //TODO: change for competition
-        public static final int CAM_RESOLUTION_HEIGHT = 480; // Height of camera resolution. [pixel]
-        public static final int CAM_RESOLUTION_WIDTH = 640; // Width of camera resolution. [pixel]
-
         public static final double CAMERA_HEIGHT = 0.79; // [m]
         public static final double TARGET_HEIGHT_FROM_GROUND = 2.62; // [m] Pefzener 2.62
-        public static final double BIT_CAMERA_HEIGHT = 1.2; // [m]
-        public static final double BIT_TARGET_HEIGHT_FROM_GROUND = 2.1; // [m] Pefzener 2.62
         public static final double CAMERA_PITCH = 34.67; // Pitch of the vision. [deg]
-        public static final double DIAG_FOV = 75; // Diagonal FOV. [deg]
-        public static final double LED_RANGE = 6; // Visible range of LEDs. [m]
-        public static final double MIN_TARGET_AREA = 10; // Minimal area of target. [pixel^2]
-        public static final double TARGET_WIDTH = 1.36; // Width of vision target strip. [m]
-        public static final double TARGET_RADIUS = 0.678; // [m]
 
         public static final Pose2d HUB_POSE = new Pose2d( // Position of the hub relative to the field.
                 new Translation2d(FIELD_LENGTH / 2, FIELD_WIDTH / 2), new Rotation2d());
-        public static final Transform2d CAMERA_TO_ROBOT = new Transform2d(
-                new Translation2d(0.038, 0.171), new Rotation2d()); // Position of the vision relative to the robot.
-
-        public static final SimVisionTarget SIM_TARGET_HUB = new SimVisionTarget( // Hub target for vision simulation.
-                HUB_POSE, TARGET_HEIGHT_FROM_GROUND, TARGET_WIDTH, TARGET_HEIGHT_FROM_GROUND);
     }
 
     public static class Intake {
         public static final double DEFAULT_POWER = 0.6;
+    }
+
+    public static class Conveyor {
+        public static final double DEFAULT_POWER = 0.5;
     }
 
     public static class Shooter {
@@ -139,5 +131,74 @@ public final class Constants {
         public static final double Kf = 1;
 
         public static final double TICKS_PER_ROTATION = 2048;
+
+        public static final InterpolatingDoubleMap SHOOT_MEASUREMENTS = new InterpolatingDoubleMap() {{
+            put(-99999.0, 2700.0);
+            put(1.7, 2700.0);
+            put(1.9, 2800.0);
+            put(1.95, 2800.0);
+            put(2.12, 2800.0);
+            put(2.43, 2770.0);
+            put(2.74, 2870.0);
+            put(3.02, 3000.0);
+            put(3.3, 3100.0);
+            put(3.62, 3150.0);
+            put(3.89, 3200.0);
+            put(4.08, 3200.0);
+            put(4.36, 3360.0);
+            put(4.4, 3360.0);
+            put(4.66, 3400.0);
+            put(4.78, 3400.0);
+            put(4.83, 3550.0);
+            put(4.91, 3500.0);
+            put(5.26, 3650.0);
+            put(5.46, 3720.0);
+            put(5.73, 3860.0);
+            put(99999.0, 3860.0);
+        }};
+    }
+
+    public static class Hood {
+        public static final double Kp = 1.3;
+        public static final double Ki = 0;
+        public static final double Kd = 0;
+        public static final double Kf = 0.01;
+
+        public static final double ALLOWABLE_ERROR = 0.1;
+
+        public static final double GEAR_RATIO = 106.88;
+
+        public static final double TICKS_PER_DEGREE = 2048 * GEAR_RATIO / 360.0;
+
+        public static final double ZERO_POSITION = 1362;
+
+        public static final double MAX_VELOCITY = 60; // [deg / s]
+        public static final double MAX_ACCELERATION = 60; // [deg / s^2]
+
+        public static final InterpolatingDoubleMap HOOD_MEASUREMENTS = new InterpolatingDoubleMap() {{
+            put(-99999.0, 12.7);
+            put(1.7, 12.7);
+            put(1.9, 14.2);
+            put(1.95, 14.3);
+            put(2.12, 15.5);
+            put(2.43, 16.5);
+            put(2.74, 17.5);
+            put(3.02, 17.7);
+            put(3.3, 18.5);
+            put(3.62, 19.3);
+            put(3.89, 20.5);
+            put(4.08, 21.5);
+            put(4.36, 20.5);
+            put(4.4, 21.0);
+            put(4.66, 22.0);
+            put(4.78, 22.5);
+            put(4.83, 23.5);
+            put(4.91, 23.7);
+            put(5.26, 24.0);
+            put(5.46, 24.0);
+            put(5.73, 24.7);
+            put(99999.0, 24.7);
+        }};
+
     }
 }
