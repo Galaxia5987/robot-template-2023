@@ -14,14 +14,14 @@ import java.util.function.DoubleSupplier;
 public class HolonomicDrive extends CommandBase {
     protected final SwerveDrive swerveDrive = SwerveDrive.getInstance();
     protected final PIDFController adjustController = new PIDFController(
-            Constants.SwerveDrive.TARGET_ADJUST_Kp,
+            Constants.TARGET_ADJUST_Kp,
             0, 0,
-            Constants.SwerveDrive.TARGET_ADJUST_Kf) {{
+            Constants.TARGET_ADJUST_Kf) {{
         enableContinuousInput(-180, 180);
     }};
-    protected final SlewRateLimiter forwardLimiter = new SlewRateLimiter(Constants.SwerveDrive.XY_SLEW_RATE_LIMIT);
-    protected final SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.SwerveDrive.XY_SLEW_RATE_LIMIT);
-    protected final SlewRateLimiter rotationLimiter = new SlewRateLimiter(Constants.SwerveDrive.ROTATION_SLEW_RATE_LIMIT);
+    protected final SlewRateLimiter forwardLimiter = new SlewRateLimiter(Constants.XY_SLEW_RATE_LIMIT);
+    protected final SlewRateLimiter strafeLimiter = new SlewRateLimiter(Constants.XY_SLEW_RATE_LIMIT);
+    protected final SlewRateLimiter rotationLimiter = new SlewRateLimiter(Constants.ROTATION_SLEW_RATE_LIMIT);
     private final DoubleSupplier forward;
     private final DoubleSupplier strafe;
     private final DoubleSupplier rotation;
@@ -35,7 +35,7 @@ public class HolonomicDrive extends CommandBase {
     @Override
     public void execute() {
         ChassisSpeeds speeds = calculateVelocities();
-        swerveDrive.holonomicDrive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
+        swerveDrive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, speeds.omegaRadiansPerSecond);
     }
 
     protected ChassisSpeeds calculateVelocities() {
@@ -49,6 +49,6 @@ public class HolonomicDrive extends CommandBase {
     protected void turnToTarget() {
         ChassisSpeeds speeds = calculateVelocities();
         double rotationVal = adjustController.calculate(IntegratedUtils.angleToTarget(), 0);
-        swerveDrive.holonomicDrive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, rotationVal);
+        swerveDrive.drive(speeds.vxMetersPerSecond, speeds.vyMetersPerSecond, rotationVal);
     }
 }

@@ -1,45 +1,89 @@
 package frc.robot.subsystems.drivetrain;
 
+import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.Timer;
-import frc.robot.Constants;
-import frc.robot.Robot;
 import frc.robot.subsystems.LoggedSubsystem;
+import frc.robot.utils.Utils;
 
-/**
- * The {@code SwerveDrive} Subsystem is responsible for the integration of modules together in order to move the robot honolomicaly.
- * The class contains several convenient methods for controlling the robot and retrieving information about his state.
- */
+import static frc.robot.Constants.*;
+
 public class SwerveDrive extends LoggedSubsystem {
     private static SwerveDrive INSTANCE = null;
-    private final SwerveModule[] modules = new SwerveModule[4];
-    private final SwerveDriveKinematics kinematics = new SwerveDriveKinematics(Constants.SwerveDrive.SWERVE_POSITIONS);
-    private final SwerveDriveOdometry odometry = new SwerveDriveOdometry(kinematics, new Rotation2d());
 
-    private final boolean fieldOriented = true;
+    private final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
+            // Front left
+            new Translation2d(DRIVETRAIN_TRACK_WIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
+            // Front right
+            new Translation2d(DRIVETRAIN_TRACK_WIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0),
+            // Rear left
+            new Translation2d(-DRIVETRAIN_TRACK_WIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
+            // Rear right
+            new Translation2d(-DRIVETRAIN_TRACK_WIDTH_METERS / 2.0, -DRIVETRAIN_WHEELBASE_METERS / 2.0));
+    private final SwerveDriveOdometry mOdometry = new SwerveDriveOdometry(mKinematics, new Rotation2d(),
+            new Pose2d());
 
-    private final SwerveDriveLogInputs inputs = SwerveDriveLogInputs.getInstance();
-    private final ChassisSpeeds lastSpeeds = new ChassisSpeeds(0, 0, 0);
-    private final double lastTime = 0;
-    private final double maxLinearAcceleration = 0;
-    private final double maxRotationalAcceleration = 0;
+    private final AHRS mNavx = new AHRS();
+
+    private final SwerveModule mFrontLeft;
+    private final SwerveModule mFrontRight;
+    private final SwerveModule mRearLeft;
+    private final SwerveModule mRearRight;
+
+    private ChassisSpeeds mChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
+    
+    private final SwerveDriveLogInputs inputs;
 
     private SwerveDrive() {
         super(SwerveDriveLogInputs.getInstance());
-        modules[Constants.SwerveModule.frConfig.wheel()] = new SwerveModule(Constants.SwerveModule.frConfig);
-        modules[Constants.SwerveModule.flConfig.wheel()] = new SwerveModule(Constants.SwerveModule.flConfig);
-        modules[Constants.SwerveModule.rrConfig.wheel()] = new SwerveModule(Constants.SwerveModule.rrConfig);
-        modules[Constants.SwerveModule.rlConfig.wheel()] = new SwerveModule(Constants.SwerveModule.rlConfig);
+        inputs = SwerveDriveLogInputs.getInstance();
+
+        mFrontLeft = new SwerveModule(
+                0,
+                FRONT_LEFT_MODULE_DRIVE_MOTOR_ID,
+                FRONT_LEFT_MODULE_STEER_MOTOR_ID,
+                OFFSETS[0],
+                FRONT_LEFT_DRIVE_INVERTED,
+                FRONT_LEFT_ANGLE_INVERTED,
+                FRONT_LEFT_ANGLE_SENSOR_PHASE,
+                FRONT_LEFT_MOTION_MAGIC_CONFIGS);
+
+        mFrontRight = new SwerveModule(
+                1,
+                FRONT_RIGHT_MODULE_DRIVE_MOTOR_ID,
+                FRONT_RIGHT_MODULE_STEER_MOTOR_ID,
+                OFFSETS[1],
+                FRONT_RIGHT_DRIVE_INVERTED,
+                FRONT_RIGHT_ANGLE_INVERTED,
+                FRONT_RIGHT_ANGLE_SENSOR_PHASE,
+                FRONT_RIGHT_MOTION_MAGIC_CONFIGS);
+
+        mRearLeft = new SwerveModule(
+                2,
+                REAR_LEFT_MODULE_DRIVE_MOTOR_ID,
+                REAR_LEFT_MODULE_STEER_MOTOR_ID,
+                OFFSETS[2],
+                REAR_LEFT_DRIVE_INVERTED,
+                REAR_LEFT_ANGLE_INVERTED,
+                REAR_LEFT_ANGLE_SENSOR_PHASE,
+                REAR_LEFT_MOTION_MAGIC_CONFIGS);
+
+        mRearRight = new SwerveModule(
+                3,
+                REAR_RIGHT_MODULE_DRIVE_MOTOR_ID,
+                REAR_RIGHT_MODULE_STEER_MOTOR_ID,
+                OFFSETS[3],
+                REAR_RIGHT_DRIVE_INVERTED,
+                REAR_RIGHT_ANGLE_INVERTED,
+                REAR_RIGHT_ANGLE_SENSOR_PHASE,
+                REAR_RIGHT_MOTION_MAGIC_CONFIGS);
     }
 
-    /**
-     * @return the swerve in field oriented mode.
-     */
     public static SwerveDrive getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new SwerveDrive();
@@ -47,145 +91,70 @@ public class SwerveDrive extends LoggedSubsystem {
         return INSTANCE;
     }
 
-    /**
-     * Move the swerve in the specified direction, rotation and velocity.
-     *
-     * @param forward  the velocity on the X-axis. [m/s]
-     * @param strafe   the velocity on the Y-axis. [m/s]
-     * @param rotation the rotational velocity counter-clockwise positive. [rad/s]
-     */
-    public void holonomicDrive(double forward, double strafe, double rotation) {
-        ChassisSpeeds speeds = fieldOriented ?
-                ChassisSpeeds.fromFieldRelativeSpeeds(forward, strafe, rotation, Robot.getAngle()) :
-                new ChassisSpeeds(forward, strafe, rotation);
-        setStates(kinematics.toSwerveModuleStates(speeds));
-    }
-
-    /**
-     * Gets the states of every module.
-     *
-     * @return the states of every module.
-     */
-    public SwerveModuleState[] getStates() {
-        SwerveModuleState[] swerveModuleState = new SwerveModuleState[modules.length];
-        for (SwerveModule module : modules) {
-            swerveModuleState[module.getWheel()] = module.getState();
-        }
-        return swerveModuleState;
-    }
-
-    /**
-     * Sets the state of the modules.
-     *
-     * @param states the states of the modules.
-     */
-    public void setStates(SwerveModuleState[] states) {
-        for (SwerveModule module : modules) {
-            states[module.getWheel()] = SwerveModuleState.optimize(states[module.getWheel()], module.getAngle());
-            module.setState(states[module.getWheel()]);
-        }
-    }
-
-    /**
-     * Gets the chassis speeds of the entire robot.
-     *
-     * @return the speed of the robot in each axis.
-     */
-    public ChassisSpeeds getChassisSpeeds() {
-        ChassisSpeeds chassisSpeeds = kinematics.toChassisSpeeds(getStates());
-        if (!fieldOriented) {
-            return chassisSpeeds;
-        }
-        return ChassisSpeeds.fromFieldRelativeSpeeds(
-                chassisSpeeds.vxMetersPerSecond,
-                chassisSpeeds.vyMetersPerSecond,
-                chassisSpeeds.omegaRadiansPerSecond,
-                Robot.getAngle()
-        );
-    }
-
-    /**
-     * Gets the pose of the robot.
-     *
-     * @return the pose of the robot.
-     */
-    public Pose2d getPose() {
-        return odometry.getPoseMeters();
-    }
-
-    public void setPose(Pose2d newPose) {
-        odometry.resetPosition(newPose, newPose.getRotation());
-    }
-
-    /**
-     * Resets the odometry.
-     */
-    public void resetOdometry() {
-        resetOdometry(new Pose2d(), new Rotation2d());
-    }
-
-    /**
-     * Resets the odometry to a specified position.
-     *
-     * @param pose the current pose.
-     */
-    public void resetOdometry(Pose2d pose, Rotation2d angle) {
-        odometry.resetPosition(new Pose2d(pose.getTranslation(), angle), angle);
-    }
-
-    /**
-     * Set the power of the angle motors for each module to a specified percent power for testing purposes.
-     *
-     * @param power percent power to give to the angel motors. [%]
-     */
-    public void setPower(double power) {
-        for (var module : modules) {
-            module.setPower(power);
-        }
-    }
-
-    /**
-     * Terminates the modules from moving.
-     */
-    public void terminate() {
-        for (SwerveModule module : modules) {
-            module.stopDriveMotor();
-            module.stopAngleMotor();
-        }
-    }
-
-    public void lock() {
-        modules[0].setAngle(Rotation2d.fromDegrees(45));
-        modules[1].setAngle(Rotation2d.fromDegrees(-45));
-        modules[3].setAngle(Rotation2d.fromDegrees(45));
-        modules[1].setAngle(Rotation2d.fromDegrees(-45));
-    }
-
-    @Override
-    public void periodic() {
-        odometry.updateWithTime(
-                Timer.getFPGATimestamp(),
-                Robot.getAngle(),
-                getStates()
-        );
-    }
-
     @Override
     public void updateInputs() {
-        ChassisSpeeds speeds = getChassisSpeeds();
-        inputs.velocityX = speeds.vxMetersPerSecond;
-        inputs.velocityY = speeds.vyMetersPerSecond;
-        inputs.velocityOmega = speeds.omegaRadiansPerSecond;
-
-        Pose2d pose = getPose();
-        inputs.positionX = pose.getX();
-        inputs.positionY = pose.getY();
-        inputs.positionOmega = pose.getRotation().getRadians();
-        inputs.pose = new double[]{inputs.positionX, inputs.positionY, inputs.positionOmega};
+        inputs.speeds = mKinematics.toChassisSpeeds(
+                mFrontLeft.getState(),
+                mFrontRight.getState(),
+                mRearLeft.getState(),
+                mRearRight.getState());
+        inputs.pose = Utils.pose2dToArray(getPose());
     }
 
     @Override
     public String getSubsystemName() {
         return "SwerveDrive";
+    }
+
+    public void zeroNavx() {
+        mNavx.reset();
+    }
+
+    public Rotation2d getNavxRotation() {
+        return Rotation2d.fromDegrees(mNavx.getYaw());
+    }
+
+    public SwerveDriveKinematics getKinematics() {
+        return mKinematics;
+    }
+
+    public void updateOdometry() {
+        mOdometry.update(getNavxRotation(), mKinematics.toSwerveModuleStates(getSpeeds()));
+    }
+
+    public Pose2d getPose() {
+        return mOdometry.getPoseMeters();
+    }
+
+    public void drive(ChassisSpeeds chassisSpeeds) {
+        mChassisSpeeds = chassisSpeeds;
+    }
+
+    public void drive(double vx, double vy, double theta) {
+        drive(new ChassisSpeeds(vx, vy, theta));
+    }
+
+    public void setStates(SwerveModuleState[] states) {
+        mChassisSpeeds = mKinematics.toChassisSpeeds(states);
+    }
+
+    public ChassisSpeeds getSpeeds() {
+        return inputs.speeds;
+    }
+
+    @Override
+    public void periodic() {
+        SwerveModuleState[] states = mKinematics.toSwerveModuleStates(mChassisSpeeds);
+
+        SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
+
+        mFrontLeft.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
+                states[0].angle);
+        mFrontRight.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
+                states[1].angle);
+        mRearLeft.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
+                states[2].angle);
+        mRearRight.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
+                states[3].angle);
     }
 }

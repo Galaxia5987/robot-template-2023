@@ -1,13 +1,14 @@
 package frc.robot.subsystems.drivetrain;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import org.littletonrobotics.junction.LogTable;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 public class SwerveModuleLogInputs implements LoggableInputs {
     private static final SwerveModuleLogInputs[] INSTANCES = new SwerveModuleLogInputs[]{null, null, null, null};
     public double aVelocity;
+    public Rotation2d aAngle;
     public double aPosition;
-    public double aAngle;
     public double aCurrent;
 
     public double dVelocity;
@@ -26,8 +27,8 @@ public class SwerveModuleLogInputs implements LoggableInputs {
     @Override
     public void toLog(LogTable table) {
         table.put("aVelocity", aVelocity);
+        table.put("aAngle", aAngle.getDegrees());
         table.put("aPosition", aPosition);
-        table.put("aAngle", aAngle);
         table.put("aCurrent", aCurrent);
 
         table.put("dVelocity", dVelocity);
@@ -37,9 +38,11 @@ public class SwerveModuleLogInputs implements LoggableInputs {
     @Override
     public void fromLog(LogTable table) {
         aVelocity = table.getDouble("aVelocity", aVelocity);
+        aAngle = Rotation2d.fromDegrees(table.getDouble("aAngle", aAngle.getDegrees()));
         aPosition = table.getDouble("aPosition", aPosition);
-        aAngle = table.getDouble("aAngle", aAngle);
+        aCurrent = table.getDouble("aCurrent", aCurrent);
 
         dVelocity = table.getDouble("dVelocity", dVelocity);
+        dCurrent = table.getDouble("dCurrent", dCurrent);
     }
 }

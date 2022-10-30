@@ -1,5 +1,7 @@
 package frc.robot.utils;
 
+import edu.wpi.first.math.geometry.Pose2d;
+
 public class Utils {
     public static final double EPSILON = 1e-9;
 
@@ -33,5 +35,9 @@ public class Utils {
 
     public static boolean epsilonEquals(double a, double b, double maxError) {
         return deadband(a - b, maxError) == 0;
+    }
+
+    public static double[] pose2dToArray(Pose2d pose) {
+        return new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()};
     }
 }
