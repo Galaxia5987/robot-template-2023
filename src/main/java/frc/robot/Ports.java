@@ -1,7 +1,6 @@
 package frc.robot;
 
 import com.ctre.phoenix.motorcontrol.TalonFXInvertType;
-import edu.wpi.first.wpilibj.I2C;
 
 public final class Ports {
 

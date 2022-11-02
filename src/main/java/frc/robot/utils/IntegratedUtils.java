@@ -21,7 +21,7 @@ public class IntegratedUtils {
                 Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX())));
         var robotAngle = new AngleUtil.Angle(
                 AngleUtil.UP_COUNTER_CLOCKWISE,
-                Robot.getAngle());
+                Robot.gyroscope.getAngle());
         return AngleUtil.absoluteAngleToYaw(absoluteAngleToTarget.minus(robotAngle));
     }
 }

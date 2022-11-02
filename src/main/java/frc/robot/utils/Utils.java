@@ -38,6 +38,6 @@ public class Utils {
     }
 
     public static double[] pose2dToArray(Pose2d pose) {
-        return new double[] {pose.getX(), pose.getY(), pose.getRotation().getDegrees()};
+        return new double[]{pose.getX(), pose.getY(), pose.getRotation().getDegrees()};
     }
 }

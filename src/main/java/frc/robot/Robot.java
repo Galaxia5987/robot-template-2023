@@ -4,13 +4,11 @@
 
 package frc.robot;
 
-import com.kauailabs.navx.frc.AHRS;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
+import frc.robot.subsystems.gyroscope.Gyroscope;
 import frc.robot.utils.valuetuner.NetworkTableConstant;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -25,49 +23,13 @@ import org.littletonrobotics.junction.io.LogSocketServer;
  * project.
  */
 public class Robot extends LoggedRobot {
-    public static final AHRS navx = new AHRS(SPI.Port.kMXP);
-
+    public static final Gyroscope gyroscope = new Gyroscope();
     public static final SwerveDrive swerveSubsystem = new SwerveDrive();
 
     public static boolean debug = false;
 
-    private static Rotation2d zeroAngle = new Rotation2d();
     private RobotContainer robotContainer;
     private Command autonomousCommand;
-
-    /**
-     * Resets the angle of the navx to the current angle.
-     */
-    public static void resetAngle() {
-        resetAngle(new Rotation2d());
-    }
-
-    /**
-     * Resets the angle of the navx to the current angle.
-     *
-     * @param angle the angle in -180 to 180 degrees coordinate system.
-     */
-    public static void resetAngle(Rotation2d angle) {
-        zeroAngle = getRawAngle().minus(angle);
-    }
-
-    /**
-     * Gets the current angle of the robot in respect to the start angle.
-     *
-     * @return the current angle of the robot in respect to the start angle.
-     */
-    public static Rotation2d getAngle() {
-        return getRawAngle().minus(zeroAngle);
-    }
-
-    /**
-     * Gets the raw angle from the navx.
-     *
-     * @return the angle of the robot in respect to the angle of the robot initiation time.
-     */
-    public static Rotation2d getRawAngle() {
-        return Robot.navx.getRotation2d();
-    }
 
     /**
      * This function is run when the robot is first started up and should be used for any
