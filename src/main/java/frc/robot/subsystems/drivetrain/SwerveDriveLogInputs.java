@@ -31,7 +31,7 @@ public class SwerveDriveLogInputs implements LoggableInputs {
     public void fromLog(LogTable table) {
         speeds.vxMetersPerSecond = table.getDouble("velocityX", speeds.vxMetersPerSecond);
         speeds.vyMetersPerSecond = table.getDouble("velocityY", speeds.vyMetersPerSecond);
-        speeds.omegaRadiansPerSecond = table.getDouble("velocityOmega", speeds.omegaRadiansPerSecond);
+        speeds.omegaRadiansPerSecond = table.getDouble("velocityTheta", speeds.omegaRadiansPerSecond);
         pose = table.getDoubleArray("pose", pose);
     }
 }

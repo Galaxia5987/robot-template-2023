@@ -4,6 +4,7 @@ import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
+import frc.robot.Robot;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
 import frc.robot.utils.IntegratedUtils;
 import frc.robot.utils.Utils;
@@ -12,7 +13,7 @@ import frc.robot.utils.controllers.PIDFController;
 import java.util.function.DoubleSupplier;
 
 public class HolonomicDrive extends CommandBase {
-    protected final SwerveDrive swerveDrive = SwerveDrive.getInstance();
+    protected final SwerveDrive swerveDrive = Robot.swerveSubsystem;
     protected final PIDFController adjustController = new PIDFController(
             Constants.TARGET_ADJUST_Kp,
             0, 0,

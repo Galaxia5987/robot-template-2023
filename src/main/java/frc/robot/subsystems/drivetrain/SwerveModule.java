@@ -14,7 +14,7 @@ import frc.robot.utils.valuetuner.WebConstant;
 public class SwerveModule extends LoggedSubsystem {
     private final WPI_TalonFX driveMotor;
     private final PIDTalon angleMotor;
-    private final int number;
+    private final SwerveDrive.Module number;
     private final int offset;
 
     private final WebConstant webKp;
@@ -24,10 +24,13 @@ public class SwerveModule extends LoggedSubsystem {
 
     private final SwerveModuleLogInputs inputs;
 
-    public SwerveModule(int number, int driveMotorPort, int angleMotorPort, int offset, boolean driveInverted,
-                        boolean angleInverted, boolean angleSensorPhase, double[] motionMagicConfigs) {
-        super(SwerveModuleLogInputs.getInstance(number));
-        inputs = SwerveModuleLogInputs.getInstance(number);
+    public SwerveModule(SwerveDrive.Module number, int driveMotorPort, int angleMotorPort, int offset, boolean driveInverted,
+                        boolean angleInverted, boolean angleSensorPhase, double[] motionMagicConfigs) throws Exception {
+        super(SwerveModuleLogInputs.getInstance(number.number));
+        if (motionMagicConfigs.length != 10) {
+            throw new Exception("Improper motion magic config!");
+        }
+        inputs = SwerveModuleLogInputs.getInstance(number.number);
         driveMotor = new WPI_TalonFX(driveMotorPort);
         angleMotor = new PIDTalon(angleMotorPort);
         this.number = number;
@@ -48,10 +51,10 @@ public class SwerveModule extends LoggedSubsystem {
         angleMotor.setNeutralMode(NeutralMode.Brake);
         angleMotor.selectProfileSlot(0, 0);
 
-        webKp = WebConstant.of("SwerveModule" + number, "Angle kP", motionMagicConfigs[0]);
-        webKi = WebConstant.of("SwerveModule" + number, "Angle kI", motionMagicConfigs[1]);
-        webKd = WebConstant.of("SwerveModule" + number, "Angle kD", motionMagicConfigs[2]);
-        webKf = WebConstant.of("SwerveModule" + number, "Angle kF", motionMagicConfigs[3]);
+        webKp = WebConstant.of(getSubsystemName(), "Angle kP", motionMagicConfigs[MotionMagicConfig.Kp.value]);
+        webKi = WebConstant.of(getSubsystemName(), "Angle kI", motionMagicConfigs[MotionMagicConfig.Ki.value]);
+        webKd = WebConstant.of(getSubsystemName(), "Angle kD", motionMagicConfigs[MotionMagicConfig.Kd.value]);
+        webKf = WebConstant.of(getSubsystemName(), "Angle kF", motionMagicConfigs[MotionMagicConfig.Kf.value]);
     }
 
     @Override
@@ -66,20 +69,20 @@ public class SwerveModule extends LoggedSubsystem {
 
     @Override
     public String getSubsystemName() {
-        return null;
+        return "SwerveModule_" + number.name();
     }
 
     public void configMotionMagic(double[] motionMagicConfigs) {
-        angleMotor.config_kP(0, motionMagicConfigs[0], Constants.TALON_TIMEOUT);
-        angleMotor.config_kI(0, motionMagicConfigs[1], Constants.TALON_TIMEOUT);
-        angleMotor.config_kD(0, motionMagicConfigs[2], Constants.TALON_TIMEOUT);
-        angleMotor.config_kF(0, motionMagicConfigs[3], Constants.TALON_TIMEOUT);
-        angleMotor.configMotionSCurveStrength((int) motionMagicConfigs[4]);
-        angleMotor.configMotionCruiseVelocity(motionMagicConfigs[5]);
-        angleMotor.configMotionAcceleration(motionMagicConfigs[6]);
-        angleMotor.configAllowableClosedloopError(0, motionMagicConfigs[7]);
-        angleMotor.configMaxIntegralAccumulator(0, motionMagicConfigs[8]);
-        angleMotor.configClosedLoopPeakOutput(0, motionMagicConfigs[9]);
+        angleMotor.config_kP(0, motionMagicConfigs[MotionMagicConfig.Kp.value], Constants.TALON_TIMEOUT);
+        angleMotor.config_kI(0, motionMagicConfigs[MotionMagicConfig.Ki.value], Constants.TALON_TIMEOUT);
+        angleMotor.config_kD(0, motionMagicConfigs[MotionMagicConfig.Kd.value], Constants.TALON_TIMEOUT);
+        angleMotor.config_kF(0, motionMagicConfigs[MotionMagicConfig.Kf.value], Constants.TALON_TIMEOUT);
+        angleMotor.configMotionSCurveStrength((int) motionMagicConfigs[MotionMagicConfig.SCurveStrength.value]);
+        angleMotor.configMotionCruiseVelocity(motionMagicConfigs[MotionMagicConfig.CruiseVelocity.value]);
+        angleMotor.configMotionAcceleration(motionMagicConfigs[MotionMagicConfig.MaxAcceleration.value]);
+        angleMotor.configAllowableClosedloopError(0, motionMagicConfigs[MotionMagicConfig.ClosedLoopError.value]);
+        angleMotor.configMaxIntegralAccumulator(0, motionMagicConfigs[MotionMagicConfig.MaxIntegralAccumulator.value]);
+        angleMotor.configClosedLoopPeakOutput(0, motionMagicConfigs[MotionMagicConfig.ClosedLoopPeakOutput.value]);
     }
 
     public Rotation2d toRotation2d(double ticks) {
@@ -112,5 +115,24 @@ public class SwerveModule extends LoggedSubsystem {
     @Override
     public void periodic() {
         angleMotor.updatePID(0, webKp.get(), webKi.get(), webKd.get(), webKf.get());
+    }
+
+    public enum MotionMagicConfig {
+        Kp(0),
+        Ki(1),
+        Kd(2),
+        Kf(3),
+        SCurveStrength(4),
+        CruiseVelocity(5),
+        MaxAcceleration(6),
+        ClosedLoopError(7),
+        MaxIntegralAccumulator(8),
+        ClosedLoopPeakOutput(9);
+
+        public final int value;
+
+        MotionMagicConfig(int value) {
+            this.value = value;
+        }
     }
 }

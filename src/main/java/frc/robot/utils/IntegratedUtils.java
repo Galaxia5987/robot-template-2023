@@ -1,7 +1,5 @@
 package frc.robot.utils;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import frc.robot.Constants;
 import frc.robot.Robot;
 import frc.robot.subsystems.drivetrain.SwerveDrive;
@@ -14,10 +12,10 @@ import frc.robot.utils.math.AngleUtil;
  * in the code, and ensure the same information for all commands.
  */
 public class IntegratedUtils {
-    private static final SwerveDrive swerveDrive = SwerveDrive.getInstance();
+    private static final SwerveDrive swerveDrive = Robot.swerveSubsystem;
 
     public static double angleToTarget() {
-        var toTarget = swerveDrive.getPose().minus(new Pose2d(8.23, 4.115, Rotation2d.fromDegrees(0)));
+        var toTarget = swerveDrive.getPose().minus(Constants.HUB_POSE);
         var absoluteAngleToTarget = new AngleUtil.Angle(
                 AngleUtil.UP_COUNTER_CLOCKWISE,
                 Math.toDegrees(Math.atan2(toTarget.getY(), toTarget.getX())));

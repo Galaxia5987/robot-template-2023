@@ -14,8 +14,6 @@ import frc.robot.utils.Utils;
 import static frc.robot.Constants.*;
 
 public class SwerveDrive extends LoggedSubsystem {
-    private static SwerveDrive INSTANCE = null;
-
     private final SwerveDriveKinematics mKinematics = new SwerveDriveKinematics(
             // Front left
             new Translation2d(DRIVETRAIN_TRACK_WIDTH_METERS / 2.0, DRIVETRAIN_WHEELBASE_METERS / 2.0),
@@ -29,66 +27,72 @@ public class SwerveDrive extends LoggedSubsystem {
             new Pose2d());
 
     private final AHRS mNavx = new AHRS();
-
-    private final SwerveModule mFrontLeft;
-    private final SwerveModule mFrontRight;
-    private final SwerveModule mRearLeft;
-    private final SwerveModule mRearRight;
-
-    private ChassisSpeeds mChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
-    
     private final SwerveDriveLogInputs inputs;
+    private SwerveModule mFrontLeft = null;
+    private SwerveModule mFrontRight = null;
+    private SwerveModule mRearLeft = null;
+    private SwerveModule mRearRight = null;
+    private ChassisSpeeds mChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
-    private SwerveDrive() {
+    public SwerveDrive() {
         super(SwerveDriveLogInputs.getInstance());
         inputs = SwerveDriveLogInputs.getInstance();
 
-        mFrontLeft = new SwerveModule(
-                0,
-                FRONT_LEFT_MODULE_DRIVE_MOTOR_ID,
-                FRONT_LEFT_MODULE_STEER_MOTOR_ID,
-                OFFSETS[0],
-                FRONT_LEFT_DRIVE_INVERTED,
-                FRONT_LEFT_ANGLE_INVERTED,
-                FRONT_LEFT_ANGLE_SENSOR_PHASE,
-                FRONT_LEFT_MOTION_MAGIC_CONFIGS);
-
-        mFrontRight = new SwerveModule(
-                1,
-                FRONT_RIGHT_MODULE_DRIVE_MOTOR_ID,
-                FRONT_RIGHT_MODULE_STEER_MOTOR_ID,
-                OFFSETS[1],
-                FRONT_RIGHT_DRIVE_INVERTED,
-                FRONT_RIGHT_ANGLE_INVERTED,
-                FRONT_RIGHT_ANGLE_SENSOR_PHASE,
-                FRONT_RIGHT_MOTION_MAGIC_CONFIGS);
-
-        mRearLeft = new SwerveModule(
-                2,
-                REAR_LEFT_MODULE_DRIVE_MOTOR_ID,
-                REAR_LEFT_MODULE_STEER_MOTOR_ID,
-                OFFSETS[2],
-                REAR_LEFT_DRIVE_INVERTED,
-                REAR_LEFT_ANGLE_INVERTED,
-                REAR_LEFT_ANGLE_SENSOR_PHASE,
-                REAR_LEFT_MOTION_MAGIC_CONFIGS);
-
-        mRearRight = new SwerveModule(
-                3,
-                REAR_RIGHT_MODULE_DRIVE_MOTOR_ID,
-                REAR_RIGHT_MODULE_STEER_MOTOR_ID,
-                OFFSETS[3],
-                REAR_RIGHT_DRIVE_INVERTED,
-                REAR_RIGHT_ANGLE_INVERTED,
-                REAR_RIGHT_ANGLE_SENSOR_PHASE,
-                REAR_RIGHT_MOTION_MAGIC_CONFIGS);
-    }
-
-    public static SwerveDrive getInstance() {
-        if (INSTANCE == null) {
-            INSTANCE = new SwerveDrive();
+        try {
+            mFrontLeft = new SwerveModule(
+                    Module.FL,
+                    FRONT_LEFT_MODULE_DRIVE_MOTOR_ID,
+                    FRONT_LEFT_MODULE_STEER_MOTOR_ID,
+                    OFFSETS[Module.FL.number],
+                    FRONT_LEFT_DRIVE_INVERTED,
+                    FRONT_LEFT_ANGLE_INVERTED,
+                    FRONT_LEFT_ANGLE_SENSOR_PHASE,
+                    FRONT_LEFT_MOTION_MAGIC_CONFIGS);
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
-        return INSTANCE;
+
+        try {
+            mFrontRight = new SwerveModule(
+                    Module.FR,
+                    FRONT_RIGHT_MODULE_DRIVE_MOTOR_ID,
+                    FRONT_RIGHT_MODULE_STEER_MOTOR_ID,
+                    OFFSETS[Module.FR.number],
+                    FRONT_RIGHT_DRIVE_INVERTED,
+                    FRONT_RIGHT_ANGLE_INVERTED,
+                    FRONT_RIGHT_ANGLE_SENSOR_PHASE,
+                    FRONT_RIGHT_MOTION_MAGIC_CONFIGS);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+
+        try {
+            mRearLeft = new SwerveModule(
+                    Module.RL,
+                    REAR_LEFT_MODULE_DRIVE_MOTOR_ID,
+                    REAR_LEFT_MODULE_STEER_MOTOR_ID,
+                    OFFSETS[Module.RL.number],
+                    REAR_LEFT_DRIVE_INVERTED,
+                    REAR_LEFT_ANGLE_INVERTED,
+                    REAR_LEFT_ANGLE_SENSOR_PHASE,
+                    REAR_LEFT_MOTION_MAGIC_CONFIGS);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+
+        try {
+            mRearRight = new SwerveModule(
+                    Module.RR,
+                    REAR_RIGHT_MODULE_DRIVE_MOTOR_ID,
+                    REAR_RIGHT_MODULE_STEER_MOTOR_ID,
+                    OFFSETS[Module.RR.number],
+                    REAR_RIGHT_DRIVE_INVERTED,
+                    REAR_RIGHT_ANGLE_INVERTED,
+                    REAR_RIGHT_ANGLE_SENSOR_PHASE,
+                    REAR_RIGHT_MOTION_MAGIC_CONFIGS);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override
@@ -148,13 +152,26 @@ public class SwerveDrive extends LoggedSubsystem {
 
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
 
-        mFrontLeft.set(states[0].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
-                states[0].angle);
-        mFrontRight.set(states[1].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
-                states[1].angle);
-        mRearLeft.set(states[2].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
-                states[2].angle);
-        mRearRight.set(states[3].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
-                states[3].angle);
+        mFrontLeft.set(states[Module.FL.number].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
+                states[Module.FL.number].angle);
+        mFrontRight.set(states[Module.FR.number].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
+                states[Module.FR.number].angle);
+        mRearLeft.set(states[Module.RL.number].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
+                states[Module.RL.number].angle);
+        mRearRight.set(states[Module.RR.number].speedMetersPerSecond / MAX_VELOCITY_METERS_PER_SECOND,
+                states[Module.RR.number].angle);
+    }
+
+    public enum Module {
+        FL(0),
+        FR(1),
+        RL(2),
+        RR(3);
+
+        public final int number;
+
+        Module(int number) {
+            this.number = number;
+        }
     }
 }
