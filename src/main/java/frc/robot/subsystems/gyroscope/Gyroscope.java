@@ -6,11 +6,12 @@ import edu.wpi.first.wpilibj.SPI;
 import frc.robot.subsystems.LoggedSubsystem;
 
 public class Gyroscope extends LoggedSubsystem {
-    private final AHRS navx = new AHRS(SPI.Port.kMXP);
+    private final AHRS navx;
     private final GyroscopeLogInputs inputs;
 
     public Gyroscope() {
         super(GyroscopeLogInputs.getInstance());
+        navx = new AHRS(SPI.Port.kMXP);
         inputs = GyroscopeLogInputs.getInstance();
         inputs.zeroAngle = new Rotation2d();
     }
