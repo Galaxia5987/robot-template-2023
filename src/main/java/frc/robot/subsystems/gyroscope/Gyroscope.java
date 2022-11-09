@@ -2,24 +2,37 @@ package frc.robot.subsystems.gyroscope;
 
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import edu.wpi.first.wpilibj.SPI;
 import frc.robot.subsystems.LoggedSubsystem;
 
 public class Gyroscope extends LoggedSubsystem {
     private final AHRS navx;
-    private final GyroscopeLogInputs inputs;
+
+    private final GyroscopeIO io;
+    private final DoubleLogEntry angleLog;
+    private final DoubleLogEntry rawAngleLog;
+    private final DoubleLogEntry zeroAngleLog;
 
     public Gyroscope() {
-        super(GyroscopeLogInputs.getInstance());
         navx = new AHRS(SPI.Port.kMXP);
-        inputs = GyroscopeLogInputs.getInstance();
-        inputs.zeroAngle = new Rotation2d();
+        io = new GyroscopeIO();
+        io.zeroAngle = new Rotation2d();
+
+        angleLog = new DoubleLogEntry(DataLogManager.getLog(), getLogDirectory("angle"));
+        rawAngleLog = new DoubleLogEntry(DataLogManager.getLog(), getLogDirectory("rawAngle"));
+        zeroAngleLog = new DoubleLogEntry(DataLogManager.getLog(), getLogDirectory("zeroAngle"));
     }
 
     @Override
-    public void updateInputs() {
-        inputs.rawAngle = navx.getRotation2d();
-        inputs.angle = getAngle();
+    public void log() {
+        io.rawAngle = navx.getRotation2d();
+        io.angle = getAngle();
+
+        angleLog.append(io.angle.getDegrees());
+        rawAngleLog.append(io.rawAngle.getDegrees());
+        zeroAngleLog.append(io.zeroAngle.getDegrees());
     }
 
     @Override
@@ -40,7 +53,7 @@ public class Gyroscope extends LoggedSubsystem {
      * @param angle the angle in -180 to 180 degrees coordinate system.
      */
     public void resetAngle(Rotation2d angle) {
-        inputs.zeroAngle = getRawAngle().minus(angle);
+        io.zeroAngle = getRawAngle().minus(angle);
     }
 
     /**
@@ -49,7 +62,7 @@ public class Gyroscope extends LoggedSubsystem {
      * @return the current angle of the robot in respect to the start angle.
      */
     public Rotation2d getAngle() {
-        return getRawAngle().minus(inputs.zeroAngle);
+        return getRawAngle().minus(io.zeroAngle);
     }
 
     /**
@@ -58,6 +71,12 @@ public class Gyroscope extends LoggedSubsystem {
      * @return the angle of the robot in respect to the angle of the robot initiation time.
      */
     public Rotation2d getRawAngle() {
-        return inputs.rawAngle;
+        return io.rawAngle;
+    }
+
+    public static class GyroscopeIO {
+        public Rotation2d angle;
+        public Rotation2d rawAngle;
+        public Rotation2d zeroAngle;
     }
 }

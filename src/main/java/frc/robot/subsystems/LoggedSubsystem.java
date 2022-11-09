@@ -7,23 +7,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class LoggedSubsystem extends SubsystemBase {
+    public static final String subsystemsDirectory = "subsystems/";
     private static final List<LoggedSubsystem> subsystems = new ArrayList<>();
-    private final LoggableInputs loggerInputs;
 
-    public LoggedSubsystem(LoggableInputs inputs) {
+    public LoggedSubsystem() {
         subsystems.add(this);
-        loggerInputs = inputs;
     }
 
     public static List<LoggedSubsystem> getSubsystems() {
         return subsystems;
     }
 
-    public LoggableInputs getLoggerInputs() {
-        return loggerInputs;
-    }
-
-    public abstract void updateInputs();
+    public abstract void log();
 
     public abstract String getSubsystemName();
+
+    public String getLogDirectory(String name) {
+        return subsystemsDirectory + getSubsystemName() + "/" + name;
+    }
+
+    public String getMotorDirectory(String motorLogName) {
+        return getLogDirectory("motors") + "/" + motorLogName;
+    }
 }

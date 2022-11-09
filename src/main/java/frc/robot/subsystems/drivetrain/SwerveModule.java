@@ -6,6 +6,8 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.datalog.DoubleLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Constants;
 import frc.robot.subsystems.LoggedSubsystem;
 import frc.robot.utils.motors.PIDTalon;
@@ -14,7 +16,6 @@ import frc.robot.utils.valuetuner.WebConstant;
 public class SwerveModule extends LoggedSubsystem {
     private final WPI_TalonFX driveMotor;
     private final PIDTalon angleMotor;
-    private final SwerveDrive.Module number;
     private final int offset;
 
     private final WebConstant webKp;
@@ -22,18 +23,22 @@ public class SwerveModule extends LoggedSubsystem {
     private final WebConstant webKd;
     private final WebConstant webKf;
 
-    private final SwerveModuleLogInputs inputs;
+    private final SwerveModuleIO io;
+    private final DoubleLogEntry positionLog;
+    private final DoubleLogEntry angleLog;
+    private final DoubleLogEntry aCurrentLog;
+
+    private final DoubleLogEntry velocityLog;
+    private final DoubleLogEntry dCurrentLog;
 
     public SwerveModule(SwerveDrive.Module number, int driveMotorPort, int angleMotorPort, int offset, boolean driveInverted,
                         boolean angleInverted, boolean angleSensorPhase, double[] motionMagicConfigs) throws Exception {
-        super(SwerveModuleLogInputs.getInstance(number.number));
         if (motionMagicConfigs.length != 10) {
             throw new Exception("Improper motion magic config!");
         }
-        inputs = SwerveModuleLogInputs.getInstance(number.number);
+        io = new SwerveModuleIO(number);
         driveMotor = new WPI_TalonFX(driveMotorPort);
         angleMotor = new PIDTalon(angleMotorPort);
-        this.number = number;
         this.offset = offset;
 
         driveMotor.configSelectedFeedbackSensor(FeedbackDevice.IntegratedSensor, 0, Constants.TALON_TIMEOUT);
@@ -55,21 +60,35 @@ public class SwerveModule extends LoggedSubsystem {
         webKi = WebConstant.of(getSubsystemName(), "Angle kI", motionMagicConfigs[MotionMagicConfig.Ki.index]);
         webKd = WebConstant.of(getSubsystemName(), "Angle kD", motionMagicConfigs[MotionMagicConfig.Kd.index]);
         webKf = WebConstant.of(getSubsystemName(), "Angle kF", motionMagicConfigs[MotionMagicConfig.Kf.index]);
+
+        positionLog = new DoubleLogEntry(DataLogManager.getLog(), getMotorDirectory("position"));
+        angleLog = new DoubleLogEntry(DataLogManager.getLog(), getMotorDirectory("angle"));
+        aCurrentLog = new DoubleLogEntry(DataLogManager.getLog(), getMotorDirectory("aCurrent"));
+
+        velocityLog = new DoubleLogEntry(DataLogManager.getLog(), getMotorDirectory("velocity"));
+        dCurrentLog = new DoubleLogEntry(DataLogManager.getLog(), getMotorDirectory("dCurrent"));
     }
 
     @Override
-    public void updateInputs() {
-        inputs.aPosition = angleMotor.getSelectedSensorPosition();
-        inputs.aAngle = toRotation2d(inputs.aPosition - offset);
-        inputs.aCurrent = angleMotor.getSupplyCurrent();
+    public void log() {
+        io.aPosition = angleMotor.getSelectedSensorPosition();
+        io.aAngle = toRotation2d(io.aPosition - offset);
+        io.aCurrent = angleMotor.getSupplyCurrent();
 
-        inputs.dVelocity = driveMotor.get();
-        inputs.dCurrent = driveMotor.getSupplyCurrent();
+        io.dVelocity = driveMotor.get();
+        io.dCurrent = driveMotor.getSupplyCurrent();
+
+        positionLog.append(io.aPosition);
+        angleLog.append(io.aAngle.getDegrees());
+        aCurrentLog.append(io.aCurrent);
+
+        velocityLog.append(io.dVelocity);
+        dCurrentLog.append(io.dCurrent);
     }
 
     @Override
     public String getSubsystemName() {
-        return "SwerveModule_" + number.name();
+        return "SwerveModule_" + io.number.name();
     }
 
     public void configMotionMagic(double[] motionMagicConfigs) {
@@ -94,11 +113,11 @@ public class SwerveModule extends LoggedSubsystem {
     }
 
     public Rotation2d getAngle() {
-        return inputs.aAngle;
+        return io.aAngle;
     }
 
     public SwerveModuleState getState() {
-        return new SwerveModuleState(inputs.dVelocity, getAngle());
+        return new SwerveModuleState(io.dVelocity, getAngle());
     }
 
     public void set(double speed, Rotation2d angle) {
@@ -108,13 +127,28 @@ public class SwerveModule extends LoggedSubsystem {
 
         driveMotor.set(ControlMode.PercentOutput, speed);
 
-        int error = toTicks(angle.minus(toRotation2d(inputs.aPosition))) + offset;
-        angleMotor.set(ControlMode.MotionMagic, inputs.aPosition + error);
+        int error = toTicks(angle.minus(toRotation2d(io.aPosition))) + offset;
+        angleMotor.set(ControlMode.MotionMagic, io.aPosition + error);
     }
 
     @Override
     public void periodic() {
         angleMotor.updatePID(0, webKp.get(), webKi.get(), webKd.get(), webKf.get());
+    }
+
+    public static class SwerveModuleIO {
+        public SwerveDrive.Module number;
+
+        public Rotation2d aAngle;
+        public double aPosition;
+        public double aCurrent;
+
+        public double dVelocity;
+        public double dCurrent;
+
+        public SwerveModuleIO(SwerveDrive.Module number) {
+            this.number = number;
+        }
     }
 
     public enum MotionMagicConfig {

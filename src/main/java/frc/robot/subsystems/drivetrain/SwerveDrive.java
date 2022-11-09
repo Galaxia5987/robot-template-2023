@@ -1,6 +1,5 @@
 package frc.robot.subsystems.drivetrain;
 
-import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -8,9 +7,10 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.util.datalog.DoubleArrayLogEntry;
+import edu.wpi.first.wpilibj.DataLogManager;
 import frc.robot.Robot;
 import frc.robot.subsystems.LoggedSubsystem;
-import frc.robot.subsystems.gyroscope.Gyroscope;
 import frc.robot.utils.Utils;
 
 import static frc.robot.Constants.*;
@@ -28,7 +28,10 @@ public class SwerveDrive extends LoggedSubsystem {
     private final SwerveDriveOdometry mOdometry = new SwerveDriveOdometry(mKinematics, new Rotation2d(),
             new Pose2d());
 
-    private final SwerveDriveLogInputs inputs;
+    private final SwerveDriveIO io;
+    private final DoubleArrayLogEntry poseLog;
+    private final DoubleArrayLogEntry speedsLog;
+
     private SwerveModule mFrontLeft = null;
     private SwerveModule mFrontRight = null;
     private SwerveModule mRearLeft = null;
@@ -36,9 +39,9 @@ public class SwerveDrive extends LoggedSubsystem {
     private ChassisSpeeds mChassisSpeeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     public SwerveDrive() {
-        super(SwerveDriveLogInputs.getInstance());
-        inputs = SwerveDriveLogInputs.getInstance();
-
+        io = new SwerveDriveIO();
+        poseLog = new DoubleArrayLogEntry(DataLogManager.getLog(), getLogDirectory("pose"));
+        speedsLog = new DoubleArrayLogEntry(DataLogManager.getLog(), getLogDirectory("speeds"));
         try {
             mFrontLeft = new SwerveModule(
                     Module.FL,
@@ -97,13 +100,15 @@ public class SwerveDrive extends LoggedSubsystem {
     }
 
     @Override
-    public void updateInputs() {
-        inputs.speeds = mKinematics.toChassisSpeeds(
+    public void log() {
+        io.speeds = mKinematics.toChassisSpeeds(
                 mFrontLeft.getState(),
                 mFrontRight.getState(),
                 mRearLeft.getState(),
                 mRearRight.getState());
-        inputs.pose = Utils.pose2dToArray(getPose());
+        io.pose = Utils.pose2dToArray(getPose());
+        poseLog.append(io.pose);
+        speedsLog.append(new double[]{io.speeds.vxMetersPerSecond, io.speeds.vyMetersPerSecond, io.speeds.omegaRadiansPerSecond});
     }
 
     @Override
@@ -140,7 +145,7 @@ public class SwerveDrive extends LoggedSubsystem {
     }
 
     public ChassisSpeeds getSpeeds() {
-        return inputs.speeds;
+        return io.speeds;
     }
 
     @Override
@@ -171,5 +176,10 @@ public class SwerveDrive extends LoggedSubsystem {
         Module(int number) {
             this.number = number;
         }
+    }
+
+    public static class SwerveDriveIO {
+        public ChassisSpeeds speeds;
+        public double[] pose;
     }
 }
