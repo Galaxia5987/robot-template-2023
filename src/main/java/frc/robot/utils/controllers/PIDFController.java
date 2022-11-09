@@ -3,7 +3,7 @@ package frc.robot.utils.controllers;
 import edu.wpi.first.math.controller.PIDController;
 
 public class PIDFController extends PIDController {
-    private final double kF;
+    private double kF;
 
     public PIDFController(double kp, double ki, double kd, double kF) {
         super(kp, ki, kd);
@@ -13,6 +13,15 @@ public class PIDFController extends PIDController {
     public PIDFController(double kp, double ki, double kd, double kF, double period) {
         super(kp, ki, kd, period);
         this.kF = kF;
+    }
+
+    public void setF(double kF) {
+        this.kF = kF;
+    }
+
+    public void setPIDF(double kP, double kI, double kD, double kF) {
+        setPID(kP, kI, kD);
+        setF(kF);
     }
 
     @Override

@@ -8,7 +8,9 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import frc.robot.Robot;
 import frc.robot.subsystems.LoggedSubsystem;
+import frc.robot.subsystems.gyroscope.Gyroscope;
 import frc.robot.utils.Utils;
 
 import static frc.robot.Constants.*;
@@ -26,7 +28,6 @@ public class SwerveDrive extends LoggedSubsystem {
     private final SwerveDriveOdometry mOdometry = new SwerveDriveOdometry(mKinematics, new Rotation2d(),
             new Pose2d());
 
-    private final AHRS mNavx = new AHRS();
     private final SwerveDriveLogInputs inputs;
     private SwerveModule mFrontLeft = null;
     private SwerveModule mFrontRight = null;
@@ -110,20 +111,16 @@ public class SwerveDrive extends LoggedSubsystem {
         return "SwerveDrive";
     }
 
-    public void zeroNavx() {
-        mNavx.reset();
-    }
-
-    public Rotation2d getNavxRotation() {
-        return Rotation2d.fromDegrees(mNavx.getYaw());
-    }
-
     public SwerveDriveKinematics getKinematics() {
         return mKinematics;
     }
 
     public void updateOdometry() {
-        mOdometry.update(getNavxRotation(), mKinematics.toSwerveModuleStates(getSpeeds()));
+        mOdometry.update(Robot.gyroscope.getAngle(), mKinematics.toSwerveModuleStates(getSpeeds()));
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        mOdometry.resetPosition(pose, Robot.gyroscope.getAngle());
     }
 
     public Pose2d getPose() {
@@ -148,6 +145,7 @@ public class SwerveDrive extends LoggedSubsystem {
 
     @Override
     public void periodic() {
+        updateOdometry();
         SwerveModuleState[] states = mKinematics.toSwerveModuleStates(mChassisSpeeds);
 
         SwerveDriveKinematics.desaturateWheelSpeeds(states, MAX_VELOCITY_METERS_PER_SECOND);
