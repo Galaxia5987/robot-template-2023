@@ -1,9 +1,17 @@
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
     private static RobotContainer INSTANCE = null;
+    private final XboxController xboxController = new XboxController(0);
+    private final Joystick leftJoystick = new Joystick(1);
+    private final Joystick rightJoystick = new Joystick(2);
+    private final JoystickButton rb = new JoystickButton(xboxController, XboxController.Button.kRightBumper.value);
+    private final JoystickButton leftTrigger = new JoystickButton(leftJoystick, 1);
 
     /**
      * The container for the robot.  Contains subsystems, OI devices, and commands.
@@ -22,11 +30,9 @@ public class RobotContainer {
     }
 
     private void configureDefaultCommands() {
-
     }
 
     private void configureButtonBindings() {
-
     }
 
 
