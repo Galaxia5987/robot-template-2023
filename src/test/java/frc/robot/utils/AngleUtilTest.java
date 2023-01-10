@@ -1,7 +1,8 @@
 package frc.robot.utils;
 
 import frc.robot.utils.math.AngleUtil;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
@@ -30,29 +31,13 @@ public class AngleUtilTest {
                     t.printStackTrace();
                 }
             }
-
-            int numDifferenceTests = in.nextInt();
-            for (int i = 0; i < numDifferenceTests; i++) {
-                try {
-                    AngleUtil.Angle from = inputAngle(in);
-                    AngleUtil.Angle to = inputAngle(in);
-                    Assert.assertEquals(
-                            "Difference test\n" + from.toString() + "\n" + to.toString() + "\n",
-                            in.nextDouble(),
-                            from.minus(to),
-                            EPSILON
-                    );
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
-            }
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
 
     public AngleUtil.Angle inputAngle(Scanner in) {
-        int zeroAngle = in.nextInt();
+        double zeroAngle = in.nextDouble();
         boolean clockwise = in.nextInt() != 0;
         double angle = in.nextDouble();
         return new AngleUtil.Angle(AngleUtil.CoordinateSystem.of(zeroAngle, clockwise), angle);

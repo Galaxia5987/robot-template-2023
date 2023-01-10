@@ -1,26 +1,28 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.inputs.LoggableInputs;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class LoggedSubsystem extends SubsystemBase {
-    private static final List<LoggedSubsystem> subsystems = new ArrayList<>();
-    private final LoggableInputs loggerInputs;
+public abstract class LoggedSubsystem<T extends LoggableInputs> extends SubsystemBase {
+    private static final List<LoggedSubsystem<?>> subsystems = new ArrayList<>();
+    protected final T loggerInputs;
 
-    public LoggedSubsystem(LoggableInputs inputs) {
+    public LoggedSubsystem(T inputs) {
         subsystems.add(this);
         loggerInputs = inputs;
     }
 
-    public static List<LoggedSubsystem> getSubsystems() {
+    public static List<LoggedSubsystem<?>> getSubsystems() {
         return subsystems;
     }
 
-    public LoggableInputs getLoggerInputs() {
-        return loggerInputs;
+    public void updateSubsystem() {
+        updateInputs();
+        Logger.getInstance().processInputs(getSubsystemName(), loggerInputs);
     }
 
     public abstract void updateInputs();

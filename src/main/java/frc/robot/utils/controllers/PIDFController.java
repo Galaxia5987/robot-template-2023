@@ -3,7 +3,7 @@ package frc.robot.utils.controllers;
 import edu.wpi.first.math.controller.PIDController;
 
 public class PIDFController extends PIDController {
-    private final double kF;
+    private double kF;
 
     public PIDFController(double kp, double ki, double kd, double kF) {
         super(kp, ki, kd);
@@ -15,22 +15,25 @@ public class PIDFController extends PIDController {
         this.kF = kF;
     }
 
+    public void setF(double kF) {
+        this.kF = kF;
+    }
+
+    public void setPIDF(double kP, double kI, double kD, double kF) {
+        setPID(kP, kI, kD);
+        setF(kF);
+    }
+
     @Override
     public double calculate(double measurement, double setpoint) {
         setSetpoint(setpoint);
-        double val = super.calculate(measurement);
-        if (val != 0) {
-            val += Math.signum(val) * kF;
-        }
-        return val;
+        return this.calculate(measurement);
     }
 
     @Override
     public double calculate(double measurement) {
         double val = super.calculate(measurement);
-        if (val != 0) {
-            val += Math.signum(val) * kF;
-        }
+        val += Math.signum(val) * kF;
         return val;
     }
 }
